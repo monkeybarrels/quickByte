@@ -1,13 +1,35 @@
 import { DataFormatter, XmlFormatterConfig, FormatConfig, DataError } from '../types';
 import { DOMParser, XMLSerializer } from '@xmldom/xmldom';
 
+/**
+ * A formatter class that handles XML data conversion.
+ * This class can convert between JavaScript objects and XML strings, with support for
+ * custom root and item element names.
+ * 
+ * @template T - The type of the data objects being formatted/parsed
+ */
 export class XmlFormatter<T extends Record<string, unknown>> implements DataFormatter<T, string> {
     private config: XmlFormatterConfig;
 
+    /**
+     * Creates a new XmlFormatter instance.
+     * 
+     * @param config - Configuration object specifying XML structure details
+     * @param config.rootElement - The name of the root XML element
+     * @param config.itemElement - The name of the XML element for each data item
+     */
     constructor(config: XmlFormatterConfig) {
         this.config = config;
     }
 
+    /**
+     * Formats an array of objects into a pretty-printed XML string.
+     * 
+     * @param data - Array of objects to be converted to XML
+     * @param config - Formatting configuration options
+     * @returns Promise resolving to a formatted XML string
+     * @throws {DataError} If XML formatting fails
+     */
     async format(data: T[], config: FormatConfig): Promise<string> {
         try {
             const doc = new DOMParser().parseFromString(`<${this.config.rootElement}/>`, 'text/xml');
@@ -52,6 +74,14 @@ export class XmlFormatter<T extends Record<string, unknown>> implements DataForm
         }
     }
 
+    /**
+     * Parses an XML string into an array of objects.
+     * 
+     * @param data - XML string to be parsed
+     * @param config - Parsing configuration options
+     * @returns Promise resolving to an array of parsed objects
+     * @throws {DataError} If XML parsing fails
+     */
     async parse(data: string, config: FormatConfig): Promise<T[]> {
         try {
             const doc = new DOMParser().parseFromString(data, 'text/xml');
@@ -91,6 +121,13 @@ export class XmlFormatter<T extends Record<string, unknown>> implements DataForm
     }
 }
 
+/**
+ * Factory function to create a new XmlFormatter instance.
+ * 
+ * @template T - The type of the data objects being formatted/parsed
+ * @param config - Configuration object specifying XML structure details
+ * @returns A new XmlFormatter instance
+ */
 export function createXmlFormatter<T extends Record<string, unknown>>(config: XmlFormatterConfig): XmlFormatter<T> {
     return new XmlFormatter<T>(config);
 } 
