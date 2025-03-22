@@ -33,13 +33,14 @@ export class FileReader<T> implements DataReader<T> {
         }
     }
 
-    readStream(config: SourceConfig, params?: unknown): AsyncIterable<T> {
-        const stream = createReadStream(this.config.path, {
-            encoding: (this.config.encoding || 'utf-8') as BufferEncoding
-        });
-
-        return {
+    async readStream(config: SourceConfig, params?: unknown): Promise<AsyncIterable<T>> {
+        const fileConfig = this.config;
+        return Promise.resolve({
             async *[Symbol.asyncIterator]() {
+                const stream = createReadStream(fileConfig.path, {
+                    encoding: (fileConfig.encoding || 'utf-8') as BufferEncoding
+                });
+
                 for await (const chunk of stream) {
                     const lines = chunk.toString().split('\n');
                     for (const line of lines) {
@@ -49,7 +50,7 @@ export class FileReader<T> implements DataReader<T> {
                     }
                 }
             }
-        };
+        });
     }
 }
 

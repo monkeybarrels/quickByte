@@ -1,7 +1,7 @@
 import { Readable } from 'stream';
 
 // Core types for data sources and formats
-export type DataSource = 'file' | 'database' | 'api' | 'stream';
+export type DataSource = 'file' | 'database' | 'api' | 'stream' | 'mongodb' | 'xml';
 export type DataFormat = 'json' | 'csv' | 'xml' | 'yaml' | 'text';
 
 // Configuration types
@@ -78,6 +78,7 @@ export interface XmlFormatterConfig {
 
 export interface DatabaseFormatterConfig {
     table: string;
+    connection: DatabaseConnection;
 }
 
 // Service interfaces
@@ -85,7 +86,7 @@ export interface DataService<T, P = unknown, R = unknown> {
     reader: DataReader<T, P>;
     formatter: DataFormatter<T, R>;
     read(config: SourceConfig, format: FormatConfig, params?: P): Promise<R>;
-    readStream?(config: SourceConfig, format: FormatConfig, params?: P): AsyncIterable<R>;
+    readStream?(config: SourceConfig, format: FormatConfig, params?: P): Promise<AsyncIterable<R>>;
 }
 
 // Error handling
@@ -111,4 +112,18 @@ export interface DataServiceOptions<T> {
     transform?: DataTransform<T, T>;
     validate?: DataValidator<T>;
     filter?: DataFilter<T>;
+}
+
+// MongoDB connection type
+export interface MongoConnection {
+    uri: string;
+    database: string;
+    collection: string;
+    options?: Record<string, unknown>;
+}
+
+export interface MongoReaderConfig {
+    connection: MongoConnection;
+    query?: Record<string, unknown>;
+    options?: Record<string, unknown>;
 }

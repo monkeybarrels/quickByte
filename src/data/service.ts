@@ -57,40 +57,14 @@ export class DataServiceImpl<T, P = unknown, R = unknown> implements DataService
         }
     }
 
-    async readStream(config: SourceConfig, format: FormatConfig, params?: P): AsyncIterable<R> {
-        if (!this.reader.readStream) {
-            throw new DataError(
-                'Stream reading not supported by this reader',
-                config.type,
-                'STREAM_NOT_SUPPORTED'
-            );
-        }
-
-        const stream = this.reader.readStream(config, params);
+    async readStream(config: SourceConfig, format: FormatConfig, params?: P): Promise<AsyncIterable<R>> {
+        const stream = await this.reader.readStream!(config, params);
+        const formatter = this.formatter;
         return {
             async *[Symbol.asyncIterator]() {
                 for await (const item of stream) {
-                    // Apply transformations if any
-                    const transformedItem = this.options.transform
-                        ? this.options.transform(item)
-                        : item;
-
-                    // Apply validation if any
-                    if (this.options.validate && !this.options.validate(transformedItem)) {
-                        throw new DataError(
-                            'Data validation failed',
-                            config.type,
-                            'VALIDATION_ERROR'
-                        );
-                    }
-
-                    // Apply filtering if any
-                    if (this.options.filter && !this.options.filter(transformedItem)) {
-                        continue;
-                    }
-
-                    // Format single item
-                    yield await this.formatter.format([transformedItem], format) as R;
+                    const formatted = await formatter.format([item], format);
+                    yield formatted as R;
                 }
             }
         };

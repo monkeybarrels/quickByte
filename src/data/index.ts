@@ -9,6 +9,7 @@ export * from './readers/file.reader';
 export * from './readers/api.reader';
 export * from './readers/database.reader';
 export * from './readers/stream.reader';
+export * from './readers/mongo.reader';
 
 // Formatters
 export * from './formatters/csv.formatter';
