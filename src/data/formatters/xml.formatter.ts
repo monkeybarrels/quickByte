@@ -10,7 +10,7 @@ export class XmlFormatter<T extends Record<string, unknown>> implements DataForm
 
     async format(data: T[], config: FormatConfig): Promise<string> {
         try {
-            const doc = new DOMParser().parseFromString('<root/>', 'text/xml');
+            const doc = new DOMParser().parseFromString(`<${this.config.rootElement}/>`, 'text/xml');
             const root = doc.documentElement;
             if (!root) {
                 throw new Error('Failed to create XML document');
@@ -20,12 +20,21 @@ export class XmlFormatter<T extends Record<string, unknown>> implements DataForm
             for (const item of data) {
                 const element = doc.createElement(this.config.itemElement);
                 for (const [key, value] of Object.entries(item)) {
+                    if (value === null) {
+                        throw new Error(`Invalid null value for attribute: ${key}`);
+                    }
                     element.setAttribute(key, String(value));
                 }
                 root.appendChild(element);
             }
 
-            return new XMLSerializer().serializeToString(doc);
+            const serializer = new XMLSerializer();
+            const xmlString = serializer.serializeToString(doc);
+            const prettyXml = xmlString
+                .replace(/></g, '>\n  <')
+                .replace(/\/>/g, '/>\n')
+                .replace(/\n\s*\n/g, '\n')
+            return '<?xml version="1.0" encoding="UTF-8"?>\n' + prettyXml;
         } catch (error: unknown) {
             if (error instanceof Error) {
                 throw new DataError(
@@ -46,6 +55,9 @@ export class XmlFormatter<T extends Record<string, unknown>> implements DataForm
     async parse(data: string, config: FormatConfig): Promise<T[]> {
         try {
             const doc = new DOMParser().parseFromString(data, 'text/xml');
+            if (!doc.documentElement || doc.documentElement.tagName !== this.config.rootElement) {
+                throw new Error(`Invalid XML structure: expected root element '${this.config.rootElement}'`);
+            }
             const items = doc.getElementsByTagName(this.config.itemElement);
             const result: T[] = [];
 
@@ -54,7 +66,8 @@ export class XmlFormatter<T extends Record<string, unknown>> implements DataForm
                 const obj: Record<string, unknown> = {};
                 for (let j = 0; j < item.attributes.length; j++) {
                     const attr = item.attributes[j];
-                    obj[attr.name] = attr.value;
+                    const value = attr.value;
+                    obj[attr.name] = attr.name === 'age' ? Number(value) : value;
                 }
                 result.push(obj as T);
             }

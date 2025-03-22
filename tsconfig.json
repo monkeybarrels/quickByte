@@ -17,6 +17,6 @@
       "*": ["*", "*.js"]
     }
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "examples/data-services.ts"],
   "exclude": ["node_modules", "dist"]
 } 
