@@ -9,6 +9,7 @@ import { DataError, DataSource } from '../../types';
 jest.mock('fs', () => ({
     promises: {
         writeFile: jest.fn(),
+        mkdir: jest.fn().mockResolvedValue(undefined)
     },
     createWriteStream: jest.fn(),
 }));
