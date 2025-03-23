@@ -198,3 +198,13 @@ export interface MapConfig<T, R> extends TransformerConfig {
     /** Function to transform each item */
     transform: (item: T) => R;
 }
+
+export interface DataWriter<T> {
+    write(data: T[], config: WriterConfig): Promise<void>;
+    writeStream?(data: AsyncIterable<T>, config: WriterConfig): Promise<void>;
+}
+
+export interface WriterConfig {
+    type: DataSource;
+    options?: Record<string, unknown>;
+}

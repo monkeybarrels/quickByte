@@ -1,0 +1,26 @@
+product_id,product_name,unit_price,category,available
+123,Keyboard,79.99,Electronics,true
+456,Headphones,99.99,Electronics,true
+789,Mouse,49.99,Electronics,true
+101,Laptop,1299.99,Electronics,true
+202,Smartphone,799.99,Electronics,true
+303,Tablet,349.99,Electronics,true
+404,Smartwatch,199.99,Electronics,true
+505,Speaker,149.99,Electronics,true
+606,Camera,299.99,Electronics,true
+707,Printer,199.99,Electronics,true
+808,External Hard Drive,129.99,Electronics,true
+909,USB Flash Drive,19.99,Electronics,true
+1010,Wireless Charger,29.99,Electronics,true
+1111,Bluetooth Speaker,79.99,Electronics,true
+1212,VR Headset,399.99,Electronics,true
+1313,Smart TV,1499.99,Electronics,true
+1414,Smart Home Hub,199.99,Electronics,true
+1515,Smart Thermostat,129.99,Electronics,true
+1616,Smart Lock,199.99,Electronics,true
+1717,Smart Light Bulb,19.99,Electronics,true
+1818,Smart Plug,29.99,Electronics,true
+1919,Smart Speaker,79.99,Electronics,true
+2020,Smart Security Camera,129.99,Electronics,true
+2121,Smart Air Fryer,149.99,Electronics,true
+2222,Smart Blender,199.99,Electronics,true
