@@ -19,7 +19,7 @@ describe('BaseTransformer', () => {
     it('should transform single items', () => {
         const transformer = new TestTransformer({ 
             name: 'test',
-            transform: (data: string) => data.length 
+            description: 'Test transformer'
         }, TransformerType.SIMPLE);
         expect(transformer.transform('hello')).toBe(5);
     });
@@ -27,14 +27,14 @@ describe('BaseTransformer', () => {
     it('should transform batch items', () => {
         const transformer = new TestTransformer({ 
             name: 'test',
-            transform: (data: string) => data.length 
+            description: 'Test transformer'
         }, TransformerType.SIMPLE);
         expect(transformer.transformBatch(['a', 'bb', 'ccc'])).toEqual([1, 2, 3]);
     });
 });
 
 describe('FieldMappingTransformer', () => {
-    const config: FieldMappingConfig<Record<string, unknown>, Record<string, unknown>> = {
+    const config: FieldMappingConfig = {
         name: 'fieldMapper',
         fieldMap: {
             firstName: 'name',
@@ -63,7 +63,7 @@ describe('FieldMappingTransformer', () => {
     });
 
     it('should drop unmapped fields when configured', () => {
-        const strictConfig: FieldMappingConfig<Record<string, unknown>, Record<string, unknown>> = {
+        const strictConfig: FieldMappingConfig = {
             ...config,
             dropUnmapped: true
         };
@@ -145,7 +145,7 @@ describe('MapTransformer', () => {
 
 describe('Factory Functions', () => {
     it('should create FieldMappingTransformer', () => {
-        const config: FieldMappingConfig<Record<string, unknown>, Record<string, unknown>> = {
+        const config: FieldMappingConfig = {
             name: 'test',
             fieldMap: { a: 'b' }
         };

@@ -4,10 +4,10 @@ import { DataTransformer, TransformerConfig, FieldMappingConfig, FilterConfig, M
  * Base transformer class that implements common functionality
  */
 export abstract class BaseTransformer<T, R> implements DataTransformer<T, R> {
-    protected config: TransformerConfig<T, R>;
+    protected config: TransformerConfig;
     type: TransformerType;
 
-    constructor(config: TransformerConfig<T, R>, type: TransformerType) {
+    constructor(config: TransformerConfig, type: TransformerType) {
         this.config = config;
         this.type = type;
     }
@@ -26,7 +26,7 @@ export class FieldMappingTransformer extends BaseTransformer<Record<string, unkn
     private fieldMap: Record<string, string>;
     private dropUnmapped: boolean;
 
-    constructor(config: FieldMappingConfig<Record<string, unknown>, Record<string, unknown>>) {
+    constructor(config: FieldMappingConfig) {
         super(config, TransformerType.FIELD_MAPPING);
         this.fieldMap = config.fieldMap;
         this.dropUnmapped = config.dropUnmapped ?? false;
@@ -96,7 +96,7 @@ export class MapTransformer<T, R> extends BaseTransformer<T, R> {
 /**
  * Creates a field mapping transformer
  */
-export function createFieldMappingTransformer(config: FieldMappingConfig<Record<string, unknown>, Record<string, unknown>>): FieldMappingTransformer {
+export function createFieldMappingTransformer(config: FieldMappingConfig): FieldMappingTransformer {
     return new FieldMappingTransformer(config);
 }
 

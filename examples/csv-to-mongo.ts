@@ -2,7 +2,7 @@ import { createCsvReader } from '../src/data/readers/csv.reader';
 import { createMongoFormatter } from '../src/data/formatters/mongo.formatter';
 import { createFieldMappingTransformer, createFilterTransformer, createMapTransformer } from '../src/data/transformers/base.transformers';
 import { createTransformerPipeline } from '../src/data/transformers/pipeline';
-import { SourceConfig, FormatConfig, MongoConnection, DataSource, DataFormat } from '../src/data/types';
+import { SourceConfig, FormatConfig, MongoConnection, DataSource, DataFormat, FilterOperator, MapOperation } from '../src/data/types';
 import { promises as fs } from 'fs';
 
 // Example data structure
@@ -59,12 +59,17 @@ async function csvToMongoExample() {
     const filter = createFilterTransformer<UserData>({
         name: 'activeUsers',
         description: 'Only includes active users',
+        field: 'status',
+        operator: FilterOperator.EQUALS,
+        value: 'active',
         predicate: (user: UserData) => user.status === 'active'
     });
 
     const mapper = createMapTransformer<UserData, UserData>({
         name: 'dataCleaner',
         description: 'Cleans and validates user data',
+        field: 'email',
+        operation: MapOperation.TO_LOWER_CASE,
         transform: (user: UserData) => ({
             ...user,
             email: user.email.toLowerCase(),

@@ -1,7 +1,10 @@
 import { createDynamicTransformerPipeline } from '../src/data/transformers/dynamic.transformer';
 import { DynamicTransformerConfigUnion } from '../src/data/transformers/dynamic.transformer';
-import { DataTransformer, TransformerType, FilterOperator, MapOperation } from '../src/data/types';
-
+import { TransformerType, FilterOperator, MapOperation, DataSource, DataFormat } from '../src/data/types';
+import { createDataTransformer } from '../src/data/transformers/data.transformer';
+import { MongoClient } from 'mongodb';
+import { CsvFormatter } from '../src/data/formatters/csv.formatter';
+import { FileWriter, FileWriterConfig } from '../src/data/writers/file.writer';
 // Example data structure
 interface UserData {
     userid: string;
@@ -19,10 +22,10 @@ async function dynamicTransformerExample() {
         {
             type: TransformerType.FIELD_MAPPING,
             name: 'fieldMapper',
-            description: 'Maps CSV fields to MongoDB fields',
+            description: 'Maps MongoDB fields to CSV fields',
             fieldMap: {
-                'first_name': 'firstName',
-                'last_name': 'lastName'
+                'firstName': 'first_name',
+                'lastName': 'last_name'
             },
             dropUnmapped: false
         },
@@ -48,29 +51,87 @@ async function dynamicTransformerExample() {
     // Create the transformer pipeline
     const pipeline = createDynamicTransformerPipeline<UserData, UserData>(transformerConfigs);
 
-    // Example data
-    const inputData: UserData[] = [
-        {
-            userid: '1',
-            firstName: 'John',
-            lastName: 'Doe',
-            email: 'JOHN@EXAMPLE.COM',
-            age: 30,
-            status: 'active'
+    // Create the data transformer with MongoDB reader and CSV writer
+    const dataTransformer = createDataTransformer<UserData, UserData>({
+        reader: {
+            read: async (config) => {
+                const client = new MongoClient(config.location);
+                try {
+                    await client.connect();
+                    const db = client.db(config.options?.database as string);
+                    const collection = db.collection(config.options?.collection as string);
+                    
+                    // Query the collection
+                    const cursor = collection.find({});
+                    const documents = await cursor.toArray();
+                    
+                    // Transform MongoDB documents to UserData
+                    const transformedData = documents.map(doc => ({
+                        userid: doc._id.toString(),
+                        firstName: doc.firstName,
+                        lastName: doc.lastName,
+                        email: doc.email,
+                        age: doc.age,
+                        status: doc.status
+                    }));
+
+                    return transformedData;
+                } finally {
+                    await client.close();
+                }
+            }
         },
-        {
-            userid: '2',
-            firstName: 'Jane',
-            lastName: 'Smith',
-            email: 'JANE@EXAMPLE.COM',
-            age: 25,
-            status: 'inactive'
+        writer: {
+            write: async (data, config) => {
+                // Implement CSV write logic here
+                // This is a placeholder - you'll need to implement actual CSV writing
+                const fileWriter = new FileWriter(config as FileWriterConfig);
+                await fileWriter.write(data, config);
+            }
+        },
+        formatter: {
+            format: async (data, config) => {
+                // Implement CSV formatting logic here
+                // This is a placeholder - you'll need to implement actual CSV formatting
+                const csvFormatter = new CsvFormatter<UserData>(config);
+                return csvFormatter.format(data, config);
+            },
+            parse: async (data, config) => {
+                // Implement CSV parsing logic here
+                // This is a placeholder - you'll need to implement actual CSV parsing
+                return [];
+            }
+        },
+        transform: (item) => { 
+            const transformedItem = pipeline.transform(item);
+            return transformedItem;
+        },
+        sourceConfig: {
+            type: DataSource.MONGODB,
+            location: 'mongodb://localhost:27017',
+            options: {
+                database: 'example_db',
+                collection: 'users'
+            }
+        },
+        writerConfig: {
+            type: DataSource.FILE,
+            options: {
+                path: './data/output/users.csv',
+                format: DataFormat.CSV,
+                headers: ['userid', 'first_name', 'last_name', 'email', 'age', 'status']
+            }
+        },
+        formatterConfig: {
+            type: DataFormat.CSV,
+            options: {
+                headers: ['userid', 'first_name', 'last_name', 'email', 'age', 'status']
+            }
         }
-    ];
+    });
 
     // Transform the data
-    const transformedData = pipeline.transformBatch(inputData);
-    console.log('Transformed data:', transformedData);
+    await dataTransformer.transform();
 }
 
 // Run the example

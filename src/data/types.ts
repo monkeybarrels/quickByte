@@ -159,16 +159,6 @@ export enum TransformerType {
 }
 
 /**
- * Base configuration for all transformers
- */
-export interface BaseTransformerConfig {
-    /** Optional name for the transformer */
-    name?: string;
-    /** Optional description of what the transformer does */
-    description?: string;
-}
-
-/**
  * Interface for data transformers that can modify data during the ETL process
  */
 export interface DataTransformer<T, R> {
@@ -195,16 +185,17 @@ export interface DataTransformer<T, R> {
 /**
  * Configuration for a transformer
  */
-export type TransformerConfig<T, R> = 
-    | FieldMappingConfig<T, R> 
-    | FilterConfig<T> 
-    | MapConfig<T, R>
-    | CustomTransformerConfig<T, R>;
+export interface TransformerConfig {
+    /** Optional name for the transformer */
+    name?: string;
+    /** Optional description of what the transformer does */
+    description?: string;
+}
 
 /**
  * Configuration for a field mapping transformer
  */
-export interface FieldMappingConfig<T, R> extends BaseTransformerConfig {
+export interface FieldMappingConfig extends TransformerConfig {
     /** Map of field names from source to target */
     fieldMap: Record<string, string>;
     /** Whether to drop fields not specified in the fieldMap */
@@ -229,7 +220,7 @@ export enum FilterOperator {
 /**
  * Configuration for a filter transformer
  */
-export interface FilterConfig<T> extends BaseTransformerConfig {
+export interface FilterConfig<T> extends TransformerConfig {
     /** Function to determine if an item should be included */
     predicate: (item: T) => boolean;
     /** Field to filter on */
@@ -255,17 +246,13 @@ export enum MapOperation {
 /**
  * Configuration for a map transformer
  */
-export interface MapConfig<T, R> extends BaseTransformerConfig {
+export interface MapConfig<T, R> extends TransformerConfig {
     /** Function to transform each item */
     transform: (item: T) => R;
     /** Field to transform */
     field: string;
     /** Operation to apply */
     operation: MapOperation;
-}
-
-export interface CustomTransformerConfig<T, R> extends BaseTransformerConfig {
-    transform: (item: T) => R;
 }
 
 export interface DataWriter<T> {
