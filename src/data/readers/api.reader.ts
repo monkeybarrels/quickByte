@@ -1,4 +1,4 @@
-import { DataReader, ApiReaderConfig, SourceConfig, DataError } from '../types';
+import { DataReader, ApiReaderConfig, SourceConfig, DataError, DataSource } from '../types';
 
 /**
  * A data reader implementation that fetches data from an HTTP API endpoint.
@@ -41,7 +41,7 @@ export class ApiReader<T> implements DataReader<T> {
             if (!response.ok) {
                 throw new DataError(
                     `API request failed: ${response.statusText}`,
-                    'api',
+                    DataSource.API,
                     'API_ERROR',
                     { status: response.status, statusText: response.statusText }
                 );
@@ -55,14 +55,14 @@ export class ApiReader<T> implements DataReader<T> {
             if (error instanceof Error) {
                 throw new DataError(
                     `API request failed: ${error.message}`,
-                    'api',
+                    DataSource.API,
                     'API_ERROR',
                     error
                 );
             }
             throw new DataError(
                 'API request failed: Unknown error',
-                'api',
+                DataSource.API,
                 'API_ERROR'
             );
         }

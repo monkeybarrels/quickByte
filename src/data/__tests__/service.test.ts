@@ -1,5 +1,5 @@
 import { DataServiceImpl, createDataService } from '../service';
-import { DataReader, DataFormatter, SourceConfig, FormatConfig, DataError, DataServiceOptions } from '../types';
+import { DataReader, DataFormatter, SourceConfig, FormatConfig, DataError, DataServiceOptions, DataSource, DataFormat } from '../types';
 
 // Mock data types for testing
 interface TestData {
@@ -29,12 +29,12 @@ describe('DataServiceImpl', () => {
     ];
 
     const mockConfig: SourceConfig = {
-        type: 'file',
+        type: DataSource.FILE,
         location: 'test.json',
     };
 
     const mockFormat: FormatConfig = {
-        type: 'json',
+        type: DataFormat.JSON,
     };
 
     beforeEach(() => {

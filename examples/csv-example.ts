@@ -15,8 +15,12 @@ async function csvExample() {
         delimiter: ','
     };
     
-    const csvFormatter = createCsvFormatter<User>(csvConfig);
-    const formatConfig: FormatConfig = { type: 'csv' as DataFormat };
+    const formatConfig: FormatConfig = {
+        type: 'csv' as DataFormat,
+        options: csvConfig as unknown as Record<string, unknown>
+    };
+    
+    const csvFormatter = createCsvFormatter<User>(formatConfig);
 
     // Format data to CSV
     const users: User[] = [

@@ -1,4 +1,4 @@
-import { DataFormatter, CsvFormatterConfig, FormatConfig, DataError } from '../types';
+import { DataFormatter, FormatConfig, CsvFormatterConfig, DataError, DataFormat } from '../types';
 
 /**
  * A formatter class that handles CSV data formatting and parsing.
@@ -6,8 +6,8 @@ import { DataFormatter, CsvFormatterConfig, FormatConfig, DataError } from '../t
  * 
  * @template T - The type of data being formatted/parsed
  */
-export class CsvFormatter<T> implements DataFormatter<T, string> {
-    private config: CsvFormatterConfig;
+export class CsvFormatter<T> implements DataFormatter<T> {
+    private config: FormatConfig;
 
     /**
      * Creates a new instance of CsvFormatter.
@@ -16,7 +16,7 @@ export class CsvFormatter<T> implements DataFormatter<T, string> {
      * @param config.headers - Array of header names for the CSV
      * @param config.delimiter - Optional delimiter character (defaults to ',')
      */
-    constructor(config: CsvFormatterConfig) {
+    constructor(config: FormatConfig) {
         this.config = config;
     }
 
@@ -30,35 +30,52 @@ export class CsvFormatter<T> implements DataFormatter<T, string> {
      */
     async format(data: T[], config: FormatConfig): Promise<string> {
         try {
-            if (data.length === 0) {
-                return this.config.headers.join(this.config.delimiter || ',');
+            const csvConfig = config.options as unknown as CsvFormatterConfig;
+            if (!csvConfig?.headers) {
+                throw new Error('CSV headers are required');
             }
 
-            const rows = [
-                this.config.headers,
-                ...data.map(item => 
-                    this.config.headers.map(header => 
-                        String((item as any)[header] || '')
-                    )
-                )
-            ];
+            const headers = csvConfig.headers;
+            const delimiter = csvConfig.delimiter || ',';
 
-            return rows
-                .map(row => row.join(this.config.delimiter || ','))
-                .join('\n');
+            // Check for circular references
+            try {
+                JSON.stringify(data);
+            } catch (error) {
+                throw new Error('Circular reference detected in data');
+            }
+
+            // Return empty string for empty data array
+            if (!data.length) {
+                return '';
+            }
+
+            // Create CSV header
+            const headerRow = headers.join(delimiter);
+
+            // Create CSV rows
+            const rows = data.map(item => {
+                const row = headers.map(header => {
+                    const value = (item as any)[header];
+                    return value !== undefined ? String(value) : '';
+                });
+                return row.join(delimiter);
+            });
+
+            return [headerRow, ...rows].join('\n');
         } catch (error: unknown) {
             if (error instanceof Error) {
                 throw new DataError(
                     `CSV formatting failed: ${error.message}`,
-                    'file',
-                    'FORMAT_ERROR',
+                    DataFormat.CSV,
+                    'CSV_ERROR',
                     error
                 );
             }
             throw new DataError(
                 'CSV formatting failed: Unknown error',
-                'file',
-                'FORMAT_ERROR'
+                DataFormat.CSV,
+                'CSV_ERROR'
             );
         }
     }
@@ -73,23 +90,35 @@ export class CsvFormatter<T> implements DataFormatter<T, string> {
      */
     async parse(data: string, config: FormatConfig): Promise<T[]> {
         try {
-            const lines = data.split('\n');
-            if (lines.length < 2) {
-                return [];
+            const csvConfig = config.options as unknown as CsvFormatterConfig;
+            if (!csvConfig?.headers) {
+                throw new Error('CSV headers are required');
             }
 
-            const headers = lines[0].split(this.config.delimiter || ',');
+            const headers = csvConfig.headers;
+            const delimiter = csvConfig.delimiter || ',';
+
+            const lines = data.split('\n');
             const result: T[] = [];
 
             for (let i = 1; i < lines.length; i++) {
-                const values = lines[i].split(this.config.delimiter || ',');
-                const item: any = {};
-                
+                const line = lines[i].trim();
+                if (!line) continue;
+
+                const values = line.split(delimiter);
+                if (values.length !== headers.length) {
+                    throw new Error(`Invalid CSV: Row ${i} has ${values.length} columns, expected ${headers.length}`);
+                }
+
+                const row: Record<string, string | number> = {};
+
                 headers.forEach((header, index) => {
-                    item[header] = values[index] || '';
+                    const value = values[index]?.trim() || '';
+                    // Convert numeric values
+                    row[header] = !isNaN(Number(value)) ? Number(value) : value;
                 });
 
-                result.push(item as T);
+                result.push(row as T);
             }
 
             return result;
@@ -97,15 +126,15 @@ export class CsvFormatter<T> implements DataFormatter<T, string> {
             if (error instanceof Error) {
                 throw new DataError(
                     `CSV parsing failed: ${error.message}`,
-                    'file',
-                    'PARSE_ERROR',
+                    DataFormat.CSV,
+                    'CSV_ERROR',
                     error
                 );
             }
             throw new DataError(
                 'CSV parsing failed: Unknown error',
-                'file',
-                'PARSE_ERROR'
+                DataFormat.CSV,
+                'CSV_ERROR'
             );
         }
     }
@@ -118,6 +147,6 @@ export class CsvFormatter<T> implements DataFormatter<T, string> {
  * @param config - Configuration object containing CSV formatting options
  * @returns A new CsvFormatter instance
  */
-export function createCsvFormatter<T>(config: CsvFormatterConfig): CsvFormatter<T> {
-    return new CsvFormatter<T>(config);
+export function createCsvFormatter<T>(config?: FormatConfig): CsvFormatter<T> {
+    return new CsvFormatter<T>(config || { type: DataFormat.CSV });
 } 

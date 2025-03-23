@@ -1,4 +1,4 @@
-import { DataFormatter, JsonFormatterConfig, FormatConfig, DataError } from '../types';
+import { DataFormatter, JsonFormatterConfig, FormatConfig, DataError, DataFormat, DataSource } from '../types';
 
 /**
  * A formatter class that handles JSON data serialization and deserialization.
@@ -33,15 +33,15 @@ export class JsonFormatter<T> implements DataFormatter<T, string> {
             if (error instanceof Error) {
                 throw new DataError(
                     `JSON formatting failed: ${error.message}`,
-                    'file',
-                    'FORMAT_ERROR',
+                    DataSource.FILE,
+                    'JSON_ERROR',
                     error
                 );
             }
             throw new DataError(
                 'JSON formatting failed: Unknown error',
-                'file',
-                'FORMAT_ERROR'
+                DataSource.FILE,
+                'JSON_ERROR'
             );
         }
     }
@@ -61,15 +61,15 @@ export class JsonFormatter<T> implements DataFormatter<T, string> {
             if (error instanceof Error) {
                 throw new DataError(
                     `JSON parsing failed: ${error.message}`,
-                    'file',
-                    'PARSE_ERROR',
+                    DataSource.FILE,
+                    'JSON_ERROR',
                     error
                 );
             }
             throw new DataError(
                 'JSON parsing failed: Unknown error',
-                'file',
-                'PARSE_ERROR'
+                DataSource.FILE,
+                'JSON_ERROR'
             );
         }
     }

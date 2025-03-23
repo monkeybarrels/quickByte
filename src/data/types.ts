@@ -1,8 +1,23 @@
 import { Readable } from 'stream';
 
 // Core types for data sources and formats
-export type DataSource = 'file' | 'database' | 'api' | 'stream' | 'mongodb' | 'xml';
-export type DataFormat = 'json' | 'csv' | 'xml' | 'yaml' | 'text';
+export enum DataSource {
+    FILE = 'file',
+    DATABASE = 'database',
+    API = 'api',
+    STREAM = 'stream',
+    MONGODB = 'mongodb',
+    XML = 'xml'
+}
+
+export enum DataFormat {
+    JSON = 'json',
+    CSV = 'csv',
+    XML = 'xml',
+    YAML = 'yaml',
+    TEXT = 'text',
+    MONGODB = 'mongodb'
+}
 
 // Configuration types
 export interface SourceConfig {
@@ -35,6 +50,7 @@ export interface DataReader<T, P = unknown> {
 export interface FileReaderConfig {
     path: string;
     encoding?: string;
+    format: DataFormat;
     delimiter?: string;
 }
 
@@ -93,7 +109,7 @@ export interface DataService<T, P = unknown, R = unknown> {
 export class DataError extends Error {
     constructor(
         message: string,
-        public source: DataSource,
+        public source: DataSource | DataFormat,
         public code: string,
         public details?: unknown
     ) {
@@ -126,4 +142,59 @@ export interface MongoReaderConfig {
     connection: MongoConnection;
     query?: Record<string, unknown>;
     options?: Record<string, unknown>;
+}
+
+/**
+ * Interface for data transformers that can modify data during the ETL process
+ */
+export interface DataTransformer<T, R> {
+    /**
+     * Transforms the input data into a new format
+     * @param data - The input data to transform
+     * @returns The transformed data
+     */
+    transform(data: T): R;
+
+    /**
+     * Transforms an array of input data
+     * @param data - Array of input data to transform
+     * @returns Array of transformed data
+     */
+    transformBatch?(data: T[]): R[];
+}
+
+/**
+ * Configuration for a transformer
+ */
+export interface TransformerConfig {
+    /** Optional name for the transformer */
+    name?: string;
+    /** Optional description of what the transformer does */
+    description?: string;
+}
+
+/**
+ * Configuration for a field mapping transformer
+ */
+export interface FieldMappingConfig extends TransformerConfig {
+    /** Map of field names from source to target */
+    fieldMap: Record<string, string>;
+    /** Whether to drop fields not specified in the fieldMap */
+    dropUnmapped?: boolean;
+}
+
+/**
+ * Configuration for a filter transformer
+ */
+export interface FilterConfig<T> extends TransformerConfig {
+    /** Function to determine if an item should be included */
+    predicate: (item: T) => boolean;
+}
+
+/**
+ * Configuration for a map transformer
+ */
+export interface MapConfig<T, R> extends TransformerConfig {
+    /** Function to transform each item */
+    transform: (item: T) => R;
 }

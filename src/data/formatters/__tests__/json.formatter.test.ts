@@ -1,5 +1,5 @@
 import { JsonFormatter, createJsonFormatter } from '../json.formatter';
-import { DataError, FormatConfig } from '../../types';
+import { DataError, FormatConfig, DataFormat } from '../../types';
 
 interface TestData {
     id: number;
@@ -8,7 +8,7 @@ interface TestData {
 
 describe('JsonFormatter', () => {
     let formatter: JsonFormatter<TestData>;
-    const formatConfig: FormatConfig = { type: 'json' };
+    const formatConfig: FormatConfig = { type: DataFormat.JSON };
 
     beforeEach(() => {
         formatter = new JsonFormatter<TestData>();

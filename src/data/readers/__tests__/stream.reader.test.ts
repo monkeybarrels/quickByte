@@ -1,10 +1,10 @@
 import { Readable } from 'stream';
 import { StreamReader, createStreamReader } from '../stream.reader';
-import { DataError, SourceConfig } from '../../types';
+import { DataError, SourceConfig, DataSource } from '../../types';
 
 describe('StreamReader', () => {
     const mockSourceConfig: SourceConfig = {
-        type: 'stream',
+        type: DataSource.STREAM,
         location: 'test-stream',
     };
 

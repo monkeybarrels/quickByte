@@ -1,6 +1,8 @@
+/// <reference types="jest" />
+
 import { promises as fs } from 'fs';
-import { FileReader, createFileReader } from '../file.reader';
-import { DataError, SourceConfig } from '../../types';
+import { createFileReader } from '../file.reader';
+import { DataError, DataSource, SourceConfig, DataFormat } from '../../types';
 import { Readable } from 'stream';
 
 // Mock fs promises
@@ -15,10 +17,11 @@ describe('FileReader', () => {
     const mockConfig = {
         path: '/test/path/data.json',
         encoding: 'utf-8',
+        format: DataFormat.JSON
     };
 
     const mockSourceConfig: SourceConfig = {
-        type: 'file',
+        type: DataSource.FILE,
         location: '/test/path/data.json',
     };
 
@@ -41,7 +44,10 @@ describe('FileReader', () => {
         });
 
         it('should use utf-8 encoding by default', async () => {
-            const configWithoutEncoding = { path: '/test/path/data.json' };
+            const configWithoutEncoding = { 
+                path: '/test/path/data.json',
+                format: DataFormat.JSON
+            };
             const mockData = [{ id: 1, name: 'Test' }];
             (fs.readFile as jest.Mock).mockResolvedValue(JSON.stringify(mockData));
 
@@ -60,7 +66,7 @@ describe('FileReader', () => {
             const reader = createFileReader(mockConfig);
             await expect(reader.read(mockSourceConfig)).rejects.toThrow(DataError);
             await expect(reader.read(mockSourceConfig)).rejects.toMatchObject({
-                source: 'file',
+                source: DataSource.FILE,
                 code: 'READ_ERROR',
                 message: expect.stringContaining('Failed to read file'),
             });

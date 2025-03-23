@@ -1,5 +1,5 @@
 import { ApiReader, createApiReader } from '../api.reader';
-import { ApiReaderConfig, DataError, SourceConfig } from '../../types';
+import { ApiReaderConfig, DataError, SourceConfig, DataSource } from '../../types';
 
 // Mock global fetch
 const mockFetch = jest.fn();
@@ -18,7 +18,7 @@ describe('ApiReader', () => {
             }
         };
         sourceConfig = {
-            type: 'api',
+            type: DataSource.API,
             location: 'test-endpoint'
         };
         mockFetch.mockClear();
@@ -82,7 +82,7 @@ describe('ApiReader', () => {
             
             await expect(reader.read(sourceConfig)).rejects.toMatchObject({
                 message: 'API request failed: Not Found',
-                source: 'api',
+                source: DataSource.API,
                 code: 'API_ERROR',
                 details: {
                     status: 404,
@@ -99,7 +99,7 @@ describe('ApiReader', () => {
             
             await expect(reader.read(sourceConfig)).rejects.toMatchObject({
                 message: 'API request failed: Network error',
-                source: 'api',
+                source: DataSource.API,
                 code: 'API_ERROR',
                 details: networkError
             });

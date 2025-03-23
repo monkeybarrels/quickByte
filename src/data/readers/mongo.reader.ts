@@ -1,4 +1,4 @@
-import { DataReader, MongoReaderConfig, SourceConfig, DataError } from '../types';
+import { DataReader, MongoReaderConfig, SourceConfig, DataError, DataSource } from '../types';
 import { MongoClient } from 'mongodb';
 
 /**
@@ -43,15 +43,15 @@ export class MongoReader<T> implements DataReader<T> {
             if (error instanceof Error) {
                 throw new DataError(
                     `MongoDB query failed: ${error.message}`,
-                    'mongodb',
-                    'MONGO_ERROR',
+                    DataSource.MONGODB,
+                    'QUERY_ERROR',
                     error
                 );
             }
             throw new DataError(
                 'MongoDB query failed: Unknown error',
-                'mongodb',
-                'MONGO_ERROR'
+                DataSource.MONGODB,
+                'QUERY_ERROR'
             );
         } finally {
             await this.client.close();

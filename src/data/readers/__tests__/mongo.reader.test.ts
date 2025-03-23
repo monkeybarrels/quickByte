@@ -1,6 +1,8 @@
+/// <reference types="jest" />
+
 import { MongoClient, Collection, Db } from 'mongodb';
 import { createMongoReader } from '../mongo.reader';
-import { SourceConfig } from '../../types';
+import { SourceConfig, DataSource } from '../../types';
 
 jest.mock('mongodb');
 
@@ -19,7 +21,7 @@ describe('MongoReader', () => {
     ];
 
     const mockSourceConfig: SourceConfig = {
-        type: 'mongodb',
+        type: DataSource.MONGODB,
         location: 'products'
     };
 

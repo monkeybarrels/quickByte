@@ -1,4 +1,4 @@
-import { DataReader, FileReaderConfig, SourceConfig, DataError } from '../types';
+import { DataReader, FileReaderConfig, SourceConfig, DataError, DataFormat, DataSource } from '../types';
 import { promises as fs } from 'fs';
 import { createReadStream } from 'fs';
 import { Readable } from 'stream';
@@ -31,19 +31,24 @@ export class FileReader<T> implements DataReader<T> {
             const content = await fs.readFile(this.config.path, {
                 encoding: (this.config.encoding || 'utf-8') as BufferEncoding
             });
-            return JSON.parse(content) as T[];
+            if(this.config.format === DataFormat.JSON) {
+                return JSON.parse(content) as T[];
+            } else if(this.config.format === DataFormat.CSV) {
+                return content.split('\n').map(line => line.split(this.config.delimiter || ',')) as T[];
+            }
+            return [] as T[];
         } catch (error: unknown) {
             if (error instanceof Error) {
                 throw new DataError(
                     `Failed to read file: ${error.message}`,
-                    'file',
+                    DataSource.FILE,
                     'READ_ERROR',
                     error
                 );
             }
             throw new DataError(
                 'Failed to read file: Unknown error',
-                'file',
+                DataSource.FILE,
                 'READ_ERROR'
             );
         }

@@ -1,4 +1,4 @@
-import { DataReader, StreamReaderConfig, SourceConfig, DataError } from '../types';
+import { DataReader, StreamReaderConfig, SourceConfig, DataError, DataSource } from '../types';
 import { Readable } from 'stream';
 
 /**
@@ -41,14 +41,14 @@ export class StreamReader<T> implements DataReader<T> {
             if (error instanceof Error) {
                 throw new DataError(
                     `Stream reading failed: ${error.message}`,
-                    'stream',
+                    DataSource.STREAM,
                     'STREAM_ERROR',
                     error
                 );
             }
             throw new DataError(
                 'Stream reading failed: Unknown error',
-                'stream',
+                DataSource.STREAM,
                 'STREAM_ERROR'
             );
         }

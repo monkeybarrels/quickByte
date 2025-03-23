@@ -1,0 +1,10 @@
+userid,first_name,last_name,email,age,status
+1,John,Doe,john@example.com,30,active
+2,Jane,Smith,jane@example.com,25,inactive
+3,Bob,Johnson,bob@example.com,35,active
+4,Alice,Brown,alice@example.com,28,active
+5,Charlie,Davis,charlie@example.com,32,inactive
+6,Diana,Evans,diana@example.com,29,active
+7,Edward,Foster,edward@example.com,31,inactive
+8,Fiona,Green,fiona@example.com,27,active
+9,George,Harris,george@example.com,33,inactive

@@ -35,7 +35,7 @@ describe('DatabaseFormatter', () => {
     };
 
     const defaultFormatConfig: FormatConfig = {
-        type: 'json' as DataFormat
+        type: DataFormat.JSON
     };
 
     beforeEach(() => {

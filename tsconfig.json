@@ -17,6 +17,6 @@
       "*": ["*", "*.js"]
     }
   },
-  "include": ["src/**/*", "examples/data-services.ts"],
+  "include": ["src/**/*", "examples/data-services.ts", "examples/csv-to-mongo.ts"],
   "exclude": ["node_modules", "dist"]
 } 

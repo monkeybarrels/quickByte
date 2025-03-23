@@ -1,4 +1,4 @@
-import { DataFormatter, DatabaseFormatterConfig, FormatConfig, DataError } from '../types';
+import { DataFormatter, DatabaseFormatterConfig, FormatConfig, DataError, DataSource } from '../types';
 import { Pool } from 'pg';
 
 /**
@@ -70,14 +70,14 @@ export class DatabaseFormatter<T> implements DataFormatter<T, void> {
             if (error instanceof Error) {
                 throw new DataError(
                     `Database formatting failed: ${error.message}`,
-                    'database',
+                    DataSource.DATABASE,
                     'FORMAT_ERROR',
                     error
                 );
             }
             throw new DataError(
                 'Database formatting failed: Unknown error',
-                'database',
+                DataSource.DATABASE,
                 'FORMAT_ERROR'
             );
         }
@@ -99,14 +99,14 @@ export class DatabaseFormatter<T> implements DataFormatter<T, void> {
             if (error instanceof Error) {
                 throw new DataError(
                     `Database parsing failed: ${error.message}`,
-                    'database',
+                    DataSource.DATABASE,
                     'PARSE_ERROR',
                     error
                 );
             }
             throw new DataError(
                 'Database parsing failed: Unknown error',
-                'database',
+                DataSource.DATABASE,
                 'PARSE_ERROR'
             );
         }

@@ -1,5 +1,6 @@
 import { DataFormatter, XmlFormatterConfig, FormatConfig, DataError } from '../types';
 import { DOMParser, XMLSerializer } from '@xmldom/xmldom';
+import { DataFormat } from '../types';
 
 /**
  * A formatter class that handles XML data conversion.
@@ -61,15 +62,15 @@ export class XmlFormatter<T extends Record<string, unknown>> implements DataForm
             if (error instanceof Error) {
                 throw new DataError(
                     `XML formatting failed: ${error.message}`,
-                    'xml',
-                    'XML_FORMAT_ERROR',
+                    DataFormat.XML,
+                    'XML_ERROR',
                     error
                 );
             }
             throw new DataError(
                 'XML formatting failed: Unknown error',
-                'xml',
-                'XML_FORMAT_ERROR'
+                DataFormat.XML,
+                'XML_ERROR'
             );
         }
     }
@@ -107,15 +108,15 @@ export class XmlFormatter<T extends Record<string, unknown>> implements DataForm
             if (error instanceof Error) {
                 throw new DataError(
                     `XML parsing failed: ${error.message}`,
-                    'xml',
-                    'XML_PARSE_ERROR',
+                    DataFormat.XML,
+                    'XML_ERROR',
                     error
                 );
             }
             throw new DataError(
                 'XML parsing failed: Unknown error',
-                'xml',
-                'XML_PARSE_ERROR'
+                DataFormat.XML,
+                'XML_ERROR'
             );
         }
     }
