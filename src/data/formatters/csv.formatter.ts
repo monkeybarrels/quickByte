@@ -57,7 +57,7 @@ export class CsvFormatter<T> implements DataFormatter<T> {
             const rows = data.map(item => {
                 const row = headers.map(header => {
                     const value = (item as any)[header];
-                    return value !== undefined ? String(value) : '';
+                    return value !== undefined && value !== null ? String(value) : '';
                 });
                 return row.join(delimiter);
             });

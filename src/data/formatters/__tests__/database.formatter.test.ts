@@ -1,4 +1,4 @@
-import { DatabaseFormatter } from '../database.formatter';
+import { DatabaseFormatter, createDatabaseFormatter } from '../database.formatter';
 import { DataError, FormatConfig, DataFormat } from '../../../data/types';
 import { Pool, QueryResult } from 'pg';
 
@@ -11,32 +11,32 @@ jest.mock('pg', () => {
     return { Pool: jest.fn(() => mPool) };
 });
 
+interface TestData {
+    id: number;
+    name: string;
+    value: string;
+}
+
+const mockConfig = {
+    connection: {
+        host: 'localhost',
+        port: 5432,
+        database: 'testdb',
+        username: 'testuser',
+        password: 'testpass',
+        ssl: false
+    },
+    table: 'test_table'
+};
+
+const defaultFormatConfig: FormatConfig = {
+    type: DataFormat.JSON
+};
+
 describe('DatabaseFormatter', () => {
     let formatter: DatabaseFormatter<TestData>;
     let mockClient: any;
     let mockPool: any;
-
-    interface TestData {
-        id: number;
-        name: string;
-        value: string;
-    }
-
-    const mockConfig = {
-        connection: {
-            host: 'localhost',
-            port: 5432,
-            database: 'testdb',
-            username: 'testuser',
-            password: 'testpass',
-            ssl: false
-        },
-        table: 'test_table'
-    };
-
-    const defaultFormatConfig: FormatConfig = {
-        type: DataFormat.JSON
-    };
 
     beforeEach(() => {
         // Reset all mocks before each test
@@ -53,6 +53,29 @@ describe('DatabaseFormatter', () => {
         mockPool.connect.mockResolvedValue(mockClient);
 
         formatter = new DatabaseFormatter<TestData>(mockConfig);
+    });
+
+    describe('constructor', () => {
+        it('should create a pool with SSL configuration when enabled', () => {
+            const sslConfig = {
+                ...mockConfig,
+                connection: {
+                    ...mockConfig.connection,
+                    ssl: true
+                }
+            };
+            new DatabaseFormatter<TestData>(sslConfig);
+            expect(Pool).toHaveBeenCalledWith(expect.objectContaining({
+                ssl: { rejectUnauthorized: false }
+            }));
+        });
+
+        it('should create a pool without SSL configuration when disabled', () => {
+            new DatabaseFormatter<TestData>(mockConfig);
+            expect(Pool).toHaveBeenCalledWith(expect.objectContaining({
+                ssl: false
+            }));
+        });
     });
 
     describe('format', () => {
@@ -96,6 +119,29 @@ describe('DatabaseFormatter', () => {
             expect(mockClient.query).toHaveBeenCalledWith('ROLLBACK');
             expect(mockClient.release).toHaveBeenCalled();
         });
+
+        it('should handle empty data array', async () => {
+            mockClient.query
+                .mockResolvedValueOnce({ rows: [] }) // TRUNCATE
+                .mockResolvedValueOnce({ rows: [] }); // COMMIT
+
+            await formatter.format([], defaultFormatConfig);
+
+            expect(mockClient.query).toHaveBeenCalledWith('BEGIN');
+            expect(mockClient.query).toHaveBeenCalledWith('TRUNCATE TABLE test_table');
+            expect(mockClient.query).toHaveBeenCalledWith('COMMIT');
+            expect(mockClient.release).toHaveBeenCalled();
+        });
+
+        it('should handle non-Error exceptions', async () => {
+            mockClient.query
+                .mockResolvedValueOnce({ rows: [] }) // TRUNCATE
+                .mockRejectedValueOnce('string error'); // Non-Error exception
+
+            await expect(formatter.format(testData, defaultFormatConfig)).rejects.toThrow(DataError);
+            expect(mockClient.query).toHaveBeenCalledWith('ROLLBACK');
+            expect(mockClient.release).toHaveBeenCalled();
+        });
     });
 
     describe('parse', () => {
@@ -126,5 +172,18 @@ describe('DatabaseFormatter', () => {
 
             await expect(formatter.parse(undefined, defaultFormatConfig)).rejects.toThrow(DataError);
         });
+
+        it('should handle non-Error exceptions', async () => {
+            mockPool.query.mockRejectedValueOnce('string error');
+
+            await expect(formatter.parse(undefined, defaultFormatConfig)).rejects.toThrow(DataError);
+        });
+    });
+});
+
+describe('createDatabaseFormatter', () => {
+    it('should create a new DatabaseFormatter instance', () => {
+        const formatter = createDatabaseFormatter<TestData>(mockConfig);
+        expect(formatter).toBeInstanceOf(DatabaseFormatter);
     });
 }); 

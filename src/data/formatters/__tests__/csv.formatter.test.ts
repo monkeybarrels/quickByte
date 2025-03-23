@@ -63,6 +63,35 @@ describe('CsvFormatter', () => {
                 .rejects
                 .toThrow(DataError);
         });
+
+        it('should handle undefined values in data', async () => {
+            const data: TestData[] = [
+                { name: 'John Doe', age: 30, email: undefined as unknown as string }
+            ];
+
+            const result = await formatter.format(data, formatConfig);
+            expect(result).toBe('name,age,email\nJohn Doe,30,');
+        });
+
+        it('should handle null values in data', async () => {
+            const data: TestData[] = [
+                { name: 'John Doe', age: 30, email: null as unknown as string }
+            ];
+
+            const result = await formatter.format(data, formatConfig);
+            expect(result).toBe('name,age,email\nJohn Doe,30,');
+        });
+
+        it('should throw DataError when headers are missing', async () => {
+            const invalidConfig: FormatConfig = {
+                type: DataFormat.CSV,
+                options: {} as unknown as Record<string, unknown>
+            };
+
+            await expect(formatter.format([], invalidConfig))
+                .rejects
+                .toThrow('CSV headers are required');
+        });
     });
 
     describe('parse', () => {
@@ -87,6 +116,53 @@ describe('CsvFormatter', () => {
             await expect(formatter.parse(invalidCsv, formatConfig))
                 .rejects
                 .toThrow(DataError);
+        });
+
+        it('should handle whitespace in CSV values', async () => {
+            const csvString = 'name,age,email\n  John Doe  ,  30  ,  john@example.com  ';
+
+            const result = await formatter.parse(csvString, formatConfig);
+            expect(result).toEqual([
+                { name: 'John Doe', age: 30, email: 'john@example.com' }
+            ]);
+        });
+
+        it('should handle empty lines in CSV', async () => {
+            const csvString = 'name,age,email\n\nJohn Doe,30,john@example.com\n\n';
+
+            const result = await formatter.parse(csvString, formatConfig);
+            expect(result).toEqual([
+                { name: 'John Doe', age: 30, email: 'john@example.com' }
+            ]);
+        });
+
+        it('should handle numeric values correctly', async () => {
+            const csvString = 'name,age,email\nJohn Doe,30,john@example.com\nJane Smith,25.5,jane@example.com';
+
+            const result = await formatter.parse(csvString, formatConfig);
+            expect(result).toEqual([
+                { name: 'John Doe', age: 30, email: 'john@example.com' },
+                { name: 'Jane Smith', age: 25.5, email: 'jane@example.com' }
+            ]);
+        });
+
+        it('should throw DataError when headers are missing in parse config', async () => {
+            const invalidConfig: FormatConfig = {
+                type: DataFormat.CSV,
+                options: {} as unknown as Record<string, unknown>
+            };
+
+            await expect(formatter.parse('', invalidConfig))
+                .rejects
+                .toThrow('CSV headers are required');
+        });
+
+        it('should throw DataError when CSV has incorrect number of columns', async () => {
+            const invalidCsv = 'name,age,email\nJohn Doe,30\nJane Smith,25,extra,column';
+
+            await expect(formatter.parse(invalidCsv, formatConfig))
+                .rejects
+                .toThrow('Invalid CSV: Row');
         });
     });
 });
