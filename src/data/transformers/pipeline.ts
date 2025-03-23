@@ -1,12 +1,16 @@
-import { DataTransformer } from '../types';
+import { DataTransformer, TransformerType } from '../types';
 
 /**
  * A pipeline that chains multiple transformers together
  */
 export class TransformerPipeline<T, R> implements DataTransformer<T, R> {
     private transformers: DataTransformer<any, any>[];
+    type: TransformerType = TransformerType.BATCH;
 
     constructor(transformers: DataTransformer<any, any>[]) {
+        if (!transformers) {
+            throw new Error('Transformers array cannot be null or undefined');
+        }
         this.transformers = transformers;
     }
 
@@ -21,6 +25,9 @@ export class TransformerPipeline<T, R> implements DataTransformer<T, R> {
     }
 
     transformBatch(data: T[]): R[] {
+        if (!data.length) {
+            return [];
+        }
         let currentData: any[] = data;
         
         for (const transformer of this.transformers) {

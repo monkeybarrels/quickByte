@@ -145,9 +145,38 @@ export interface MongoReaderConfig {
 }
 
 /**
+ * Types of transformers available in the system
+ */
+export enum TransformerType {
+    SIMPLE = 'simple',
+    BATCH = 'batch',
+    TYPE_CONVERT = 'type_convert',
+    COMPLEX = 'complex',
+    ERROR = 'error',
+    FIELD_MAPPING = 'field_mapping',
+    FILTER = 'filter',
+    MAP = 'map'
+}
+
+/**
+ * Base configuration for all transformers
+ */
+export interface BaseTransformerConfig {
+    /** Optional name for the transformer */
+    name?: string;
+    /** Optional description of what the transformer does */
+    description?: string;
+}
+
+/**
  * Interface for data transformers that can modify data during the ETL process
  */
 export interface DataTransformer<T, R> {
+    /**
+     * The type of transformer
+     */
+    type: TransformerType;
+
     /**
      * Transforms the input data into a new format
      * @param data - The input data to transform
@@ -160,23 +189,22 @@ export interface DataTransformer<T, R> {
      * @param data - Array of input data to transform
      * @returns Array of transformed data
      */
-    transformBatch?(data: T[]): R[];
+    transformBatch(data: T[]): R[];
 }
 
 /**
  * Configuration for a transformer
  */
-export interface TransformerConfig {
-    /** Optional name for the transformer */
-    name?: string;
-    /** Optional description of what the transformer does */
-    description?: string;
-}
+export type TransformerConfig<T, R> = 
+    | FieldMappingConfig<T, R> 
+    | FilterConfig<T> 
+    | MapConfig<T, R>
+    | CustomTransformerConfig<T, R>;
 
 /**
  * Configuration for a field mapping transformer
  */
-export interface FieldMappingConfig extends TransformerConfig {
+export interface FieldMappingConfig<T, R> extends BaseTransformerConfig {
     /** Map of field names from source to target */
     fieldMap: Record<string, string>;
     /** Whether to drop fields not specified in the fieldMap */
@@ -184,18 +212,59 @@ export interface FieldMappingConfig extends TransformerConfig {
 }
 
 /**
+ * Types of filter operators available
+ */
+export enum FilterOperator {
+    EQUALS = 'eq',
+    NOT_EQUALS = 'neq',
+    GREATER_THAN = 'gt',
+    LESS_THAN = 'lt',
+    GREATER_THAN_EQUALS = 'gte',
+    LESS_THAN_EQUALS = 'lte',
+    CONTAINS = 'contains',
+    STARTS_WITH = 'startsWith',
+    ENDS_WITH = 'endsWith'
+}
+
+/**
  * Configuration for a filter transformer
  */
-export interface FilterConfig<T> extends TransformerConfig {
+export interface FilterConfig<T> extends BaseTransformerConfig {
     /** Function to determine if an item should be included */
     predicate: (item: T) => boolean;
+    /** Field to filter on */
+    field: string;
+    /** Operator to use for filtering */
+    operator: FilterOperator;
+    /** Value to compare against */
+    value: string | number | boolean;
+}
+
+/**
+ * Types of map operations available
+ */
+export enum MapOperation {
+    TO_LOWER_CASE = 'toLowerCase',
+    TO_UPPER_CASE = 'toUpperCase',
+    TRIM = 'trim',
+    NUMBER = 'number',
+    BOOLEAN = 'boolean',
+    STRING = 'string'
 }
 
 /**
  * Configuration for a map transformer
  */
-export interface MapConfig<T, R> extends TransformerConfig {
+export interface MapConfig<T, R> extends BaseTransformerConfig {
     /** Function to transform each item */
+    transform: (item: T) => R;
+    /** Field to transform */
+    field: string;
+    /** Operation to apply */
+    operation: MapOperation;
+}
+
+export interface CustomTransformerConfig<T, R> extends BaseTransformerConfig {
     transform: (item: T) => R;
 }
 

@@ -7,7 +7,7 @@ import {
     createFilterTransformer,
     createMapTransformer
 } from '../base.transformers';
-import { TransformerConfig, FieldMappingConfig, FilterConfig, MapConfig } from '../../types';
+import { TransformerConfig, FieldMappingConfig, FilterConfig, MapConfig, TransformerType, FilterOperator, MapOperation } from '../../types';
 
 describe('BaseTransformer', () => {
     class TestTransformer extends BaseTransformer<string, number> {
@@ -17,18 +17,24 @@ describe('BaseTransformer', () => {
     }
 
     it('should transform single items', () => {
-        const transformer = new TestTransformer({ name: 'test' });
+        const transformer = new TestTransformer({ 
+            name: 'test',
+            transform: (data: string) => data.length 
+        }, TransformerType.SIMPLE);
         expect(transformer.transform('hello')).toBe(5);
     });
 
     it('should transform batch items', () => {
-        const transformer = new TestTransformer({ name: 'test' });
+        const transformer = new TestTransformer({ 
+            name: 'test',
+            transform: (data: string) => data.length 
+        }, TransformerType.SIMPLE);
         expect(transformer.transformBatch(['a', 'bb', 'ccc'])).toEqual([1, 2, 3]);
     });
 });
 
 describe('FieldMappingTransformer', () => {
-    const config: FieldMappingConfig = {
+    const config: FieldMappingConfig<Record<string, unknown>, Record<string, unknown>> = {
         name: 'fieldMapper',
         fieldMap: {
             firstName: 'name',
@@ -57,7 +63,7 @@ describe('FieldMappingTransformer', () => {
     });
 
     it('should drop unmapped fields when configured', () => {
-        const strictConfig: FieldMappingConfig = {
+        const strictConfig: FieldMappingConfig<Record<string, unknown>, Record<string, unknown>> = {
             ...config,
             dropUnmapped: true
         };
@@ -96,6 +102,9 @@ describe('FieldMappingTransformer', () => {
 describe('FilterTransformer', () => {
     const config: FilterConfig<number> = {
         name: 'numberFilter',
+        field: 'value',
+        operator: FilterOperator.GREATER_THAN,
+        value: 0,
         predicate: (num: number) => num > 0
     };
 
@@ -118,6 +127,8 @@ describe('FilterTransformer', () => {
 describe('MapTransformer', () => {
     const config: MapConfig<string, number> = {
         name: 'stringToLength',
+        field: 'value',
+        operation: MapOperation.NUMBER,
         transform: (str: string) => str.length
     };
 
@@ -134,7 +145,7 @@ describe('MapTransformer', () => {
 
 describe('Factory Functions', () => {
     it('should create FieldMappingTransformer', () => {
-        const config: FieldMappingConfig = {
+        const config: FieldMappingConfig<Record<string, unknown>, Record<string, unknown>> = {
             name: 'test',
             fieldMap: { a: 'b' }
         };
@@ -145,6 +156,9 @@ describe('Factory Functions', () => {
     it('should create FilterTransformer', () => {
         const config: FilterConfig<number> = {
             name: 'test',
+            field: 'value',
+            operator: FilterOperator.GREATER_THAN,
+            value: 0,
             predicate: (n: number) => n > 0
         };
         const transformer = createFilterTransformer(config);
@@ -154,6 +168,8 @@ describe('Factory Functions', () => {
     it('should create MapTransformer', () => {
         const config: MapConfig<string, number> = {
             name: 'test',
+            field: 'value',
+            operation: MapOperation.NUMBER,
             transform: (s: string) => s.length
         };
         const transformer = createMapTransformer(config);
