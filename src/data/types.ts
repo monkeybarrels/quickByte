@@ -264,3 +264,5 @@ export interface WriterConfig {
     type: DataSource;
     options?: Record<string, unknown>;
 }
+
+export type DynamicTransformerConfigUnion = FieldMappingConfig | FilterConfig<any> | MapConfig<any, any>;

@@ -99,7 +99,7 @@ async function dynamicTransformerExample() {
             parse: async (data, config) => {
                 // Implement CSV parsing logic here
                 // This is a placeholder - you'll need to implement actual CSV parsing
-                return [];
+                return data as unknown as UserData[];
             }
         },
         transform: (item) => { 
