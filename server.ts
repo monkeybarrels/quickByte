@@ -16,18 +16,24 @@ async function startServer() {
 
   // Register Swagger
   await app.register(swagger, {
-    swagger: {
+    openapi: {
       info: {
         title: 'QuickByte API',
         version: '1.0.0'
       },
-      host: `${config.host}:${config.port}`,
-      schemes: ['http'],
-      consumes: ['application/json'],
-      produces: ['application/json'],
-      tags: [
-        { name: 'transformers', description: 'Transformer endpoints' }
-      ]
+      servers: [{
+        url: `http://${config.host}:${config.port}`
+      }],
+      components: {
+        schemas: {
+          Error: {
+            type: 'object',
+            properties: {
+              error: { type: 'string' }
+            }
+          }
+        }
+      }
     }
   });
 

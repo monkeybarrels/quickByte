@@ -22,6 +22,7 @@
     "@types/uuid": "^10.0.0",
     "@vue/compiler-sfc": "^3.4.15",
     "@xmldom/xmldom": "^0.9.8",
+    "axios": "^1.8.4",
     "dotenv": "^16.4.7",
     "fastify": "^4.26.1",
     "mongodb": "^6.15.0",

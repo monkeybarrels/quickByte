@@ -1,6 +1,23 @@
 import { FastifyInstance } from 'fastify';
 import { TransformerController } from '../../controllers/transformer/transformer.controller';
 
+const transformerResponseSchema = {
+  type: 'object',
+  properties: {
+    id: { type: 'string' },
+    name: { type: 'string' },
+    description: { type: 'string' },
+    config: { type: 'object', additionalProperties: true }
+  }
+};
+
+const errorResponseSchema = {
+  type: 'object',
+  properties: {
+    error: { type: 'string' }
+  }
+};
+
 export default async function transformerRoutes(fastify: FastifyInstance) {
   const controller = new TransformerController();
 
@@ -13,14 +30,14 @@ export default async function transformerRoutes(fastify: FastifyInstance) {
         required: ['name', 'description', 'config'],
         properties: {
           name: { type: 'string' },
-          description: { type: 'object' },
-          config: { type: 'object' }
+          description: { type: 'string' },
+          config: { type: 'object', additionalProperties: true }
         }
       },
       response: {
         201: {
           description: 'Transformer created successfully',
-          type: 'object'
+          ...transformerResponseSchema
         }
       }
     }
@@ -34,9 +51,7 @@ export default async function transformerRoutes(fastify: FastifyInstance) {
         200: {
           description: 'List of transformers',
           type: 'array',
-          items: {
-            type: 'object'
-          }
+          items: transformerResponseSchema
         }
       }
     }
@@ -56,10 +71,11 @@ export default async function transformerRoutes(fastify: FastifyInstance) {
       response: {
         200: {
           description: 'Transformer details',
-          type: 'object'
+          ...transformerResponseSchema
         },
         404: {
-          description: 'Transformer not found'
+          description: 'Transformer not found',
+          ...errorResponseSchema
         }
       }
     }
@@ -81,16 +97,17 @@ export default async function transformerRoutes(fastify: FastifyInstance) {
         properties: {
           name: { type: 'string' },
           description: { type: 'string' },
-          config: { type: 'object' }
+          config: { type: 'object', additionalProperties: true }
         }
       },
       response: {
         200: {
           description: 'Transformer updated successfully',
-          type: 'object'
+          ...transformerResponseSchema
         },
         404: {
-          description: 'Transformer not found'
+          description: 'Transformer not found',
+          ...errorResponseSchema
         }
       }
     }
@@ -109,10 +126,12 @@ export default async function transformerRoutes(fastify: FastifyInstance) {
       },
       response: {
         204: {
-          description: 'Transformer deleted successfully'
+          description: 'Transformer deleted successfully',
+          type: 'null'
         },
         404: {
-          description: 'Transformer not found'
+          description: 'Transformer not found',
+          ...errorResponseSchema
         }
       }
     }
