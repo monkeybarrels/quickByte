@@ -6,7 +6,7 @@
     "build": "tsc && npm run build:ui",
     "build:ui": "cd ui && vite build",
     "start": "node dist/server.js",
-    "dev": "concurrently \"ts-node server.ts\" \"cd ui && vite\"",
+    "dev": "nodemon --watch './**/*.ts' --ignore 'src/**/*.test.ts' --exec ts-node ./server.ts",
     "preview": "cd ui && vite preview",
     "type-check": "tsc --noEmit && cd ui && vue-tsc --noEmit",
     "test": "jest",
