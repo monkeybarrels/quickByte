@@ -1,115 +1,116 @@
-import { ApiReader, createApiReader } from '../api.reader';
-import { ApiReaderConfig, DataError, SourceConfig, DataSource } from '../../types';
+/// <reference types="jest" />
+
+import { createApiReader } from '../api.reader';
+import { DataError, DataSource, SourceConfig, ApiReaderConfig } from '../../types';
 
 // Mock global fetch
 const mockFetch = jest.fn();
 global.fetch = mockFetch;
 
 describe('ApiReader', () => {
-    let config: ApiReaderConfig;
-    let sourceConfig: SourceConfig;
-    
+    const mockConfig: ApiReaderConfig = {
+        url: 'https://api.example.com/users',
+        method: 'GET',
+        headers: {
+            'Authorization': 'Bearer test-token',
+            'Content-Type': 'application/json'
+        }
+    };
+
+    const mockSourceConfig: SourceConfig = {
+        type: DataSource.API,
+        location: 'users'
+    };
+
     beforeEach(() => {
-        config = {
-            url: 'https://api.example.com/data',
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        };
-        sourceConfig = {
-            type: DataSource.API,
-            location: 'test-endpoint'
-        };
-        mockFetch.mockClear();
+        jest.clearAllMocks();
     });
 
-    describe('read', () => {
-        it('should successfully fetch and return data', async () => {
-            const mockData = [{ id: 1, name: 'Test' }];
+    describe('read method', () => {
+        test('should successfully fetch and parse JSON data', async () => {
+            const mockData = [
+                { id: 1, name: 'John Doe', email: 'john@example.com' },
+                { id: 2, name: 'Jane Smith', email: 'jane@example.com' }
+            ];
+            
             mockFetch.mockResolvedValueOnce({
                 ok: true,
                 json: async () => mockData
             });
 
-            const reader = new ApiReader(config);
-            const result = await reader.read(sourceConfig);
+            const reader = createApiReader(mockConfig);
+            const result = await reader.read(mockSourceConfig);
 
             expect(result).toEqual(mockData);
             expect(mockFetch).toHaveBeenCalledWith(
-                config.url,
+                mockConfig.url,
                 {
                     method: 'GET',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: mockConfig.headers,
                     body: undefined
                 }
             );
         });
 
-        it('should use POST method and body when configured', async () => {
+        test('should handle POST request with body', async () => {
             const postConfig: ApiReaderConfig = {
-                ...config,
+                ...mockConfig,
                 method: 'POST',
-                body: { test: true }
+                body: { filter: 'active' }
             };
             
+            const mockData = [{ id: 1, name: 'Active User' }];
             mockFetch.mockResolvedValueOnce({
                 ok: true,
-                json: async () => []
+                json: async () => mockData
             });
 
-            const reader = new ApiReader(postConfig);
-            await reader.read(sourceConfig);
+            const reader = createApiReader(postConfig);
+            const result = await reader.read(mockSourceConfig);
 
+            expect(result).toEqual(mockData);
             expect(mockFetch).toHaveBeenCalledWith(
-                config.url,
+                postConfig.url,
                 {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ test: true })
+                    headers: postConfig.headers,
+                    body: JSON.stringify({ filter: 'active' })
                 }
             );
         });
 
-        it('should throw DataError when response is not ok', async () => {
+        test('should handle API errors gracefully', async () => {
             mockFetch.mockResolvedValueOnce({
                 ok: false,
-                status: 404,
-                statusText: 'Not Found'
+                status: 401,
+                statusText: 'Unauthorized'
             });
 
-            const reader = new ApiReader(config);
+            const reader = createApiReader(mockConfig);
             
-            await expect(reader.read(sourceConfig)).rejects.toMatchObject({
-                message: 'API request failed: Not Found',
+            await expect(reader.read(mockSourceConfig)).rejects.toMatchObject({
+                message: 'API request failed: Unauthorized',
                 source: DataSource.API,
                 code: 'API_ERROR',
                 details: {
-                    status: 404,
-                    statusText: 'Not Found'
+                    status: 401,
+                    statusText: 'Unauthorized'
                 }
             });
         });
 
-        it('should throw DataError when fetch fails', async () => {
-            const networkError = new Error('Network error');
+        test('should handle network errors', async () => {
+            const networkError = new Error('Failed to connect');
             mockFetch.mockRejectedValueOnce(networkError);
 
-            const reader = new ApiReader(config);
+            const reader = createApiReader(mockConfig);
             
-            await expect(reader.read(sourceConfig)).rejects.toMatchObject({
-                message: 'API request failed: Network error',
+            await expect(reader.read(mockSourceConfig)).rejects.toMatchObject({
+                message: 'API request failed: Failed to connect',
                 source: DataSource.API,
                 code: 'API_ERROR',
                 details: networkError
             });
-        });
-    });
-
-    describe('createApiReader', () => {
-        it('should create an instance of ApiReader', () => {
-            const reader = createApiReader(config);
-            expect(reader).toBeInstanceOf(ApiReader);
         });
     });
 }); 

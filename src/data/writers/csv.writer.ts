@@ -8,6 +8,7 @@ export interface CsvWriterConfig extends WriterConfig {
         encoding?: BufferEncoding;
         append?: boolean;
         delimiter?: string;
+        columns?: string[]; // Optional array to specify column order
     };
 }
 
@@ -19,13 +20,15 @@ export class CsvWriter<T> implements DataWriter<T> {
             const fileConfig = config.options as CsvWriterConfig['options'];
             const delimiter = fileConfig.delimiter || ',';
             
+            // Use provided columns or fall back to object keys
+            const columns = fileConfig.columns || Object.keys(data[0] as Record<string, unknown>);
+            
             // Convert data to CSV format
-            const headers = Object.keys(data[0] as Record<string, unknown>);
             const csvRows = [
-                headers.join(delimiter),
+                columns.join(delimiter),
                 ...data.map(row => 
-                    headers.map(header => 
-                        (row as Record<string, unknown>)[header]
+                    columns.map(column => 
+                        (row as Record<string, unknown>)[column]
                     ).join(delimiter)
                 )
             ];
@@ -54,17 +57,18 @@ export class CsvWriter<T> implements DataWriter<T> {
             const fileConfig = config.options as CsvWriterConfig['options'];
             const delimiter = fileConfig.delimiter || ',';
             let isFirstChunk = true;
-            let headers: string[] = [];
+            let columns: string[] = [];
 
             for await (const chunk of data) {
                 if (isFirstChunk) {
-                    headers = Object.keys(chunk as Record<string, unknown>);
-                    await this.writeToFile(headers.join(delimiter) + '\n', fileConfig);
+                    // Use provided columns or fall back to object keys
+                    columns = fileConfig.columns || Object.keys(chunk as Record<string, unknown>);
+                    await this.writeToFile(columns.join(delimiter) + '\n', fileConfig);
                     isFirstChunk = false;
                 }
 
-                const row = headers.map(header => 
-                    (chunk as Record<string, unknown>)[header]
+                const row = columns.map(column => 
+                    (chunk as Record<string, unknown>)[column]
                 ).join(delimiter);
 
                 await this.writeToFile(row + '\n', fileConfig);

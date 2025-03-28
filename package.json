@@ -17,6 +17,7 @@
     "@fastify/static": "^7.0.4",
     "@fastify/swagger": "^8.12.0",
     "@fastify/swagger-ui": "^3.0.0",
+    "@types/axios": "^0.14.4",
     "@types/mongodb": "^4.0.7",
     "@types/pg": "^8.11.11",
     "@types/uuid": "^10.0.0",
