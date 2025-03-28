@@ -1,6 +1,6 @@
-# API to CSV Example
+# API to JSON Example
 
-This example demonstrates how to fetch data from an API, transform it using multiple transformers, and save the result as a CSV file using QuickByte's data transformation capabilities.
+This example demonstrates how to fetch data from an API, transform it using multiple transformers, and save the result as a JSON file using QuickByte's data transformation capabilities.
 
 ## Overview
 
@@ -8,7 +8,7 @@ The example shows how to:
 - Fetch data from a REST API
 - Apply multiple transformations to the data
 - Filter data based on specific criteria
-- Format data for CSV output
+- Format data for JSON output
 - Handle API responses and errors
 
 ## Key Features
@@ -17,7 +17,7 @@ The example shows how to:
 - Multiple transformer pipeline
 - Data filtering
 - Field transformation
-- CSV writing with custom columns
+- JSON file writing
 - Error handling
 - Progress logging
 
@@ -25,7 +25,7 @@ The example shows how to:
 
 ```typescript
 import { createApiReader } from '../src/data/readers/api.reader';
-import { createCsvWriter } from '../src/data/writers/csv.writer';
+import { createFileWriter } from '../src/data/writers/file.writer';
 import { DataSource, SourceConfig, TransformerType, MapOperation, FilterOperator } from '../src/data/types';
 import { createMapTransformer, createFilterTransformer } from '../src/data/transformers/base.transformers';
 import { createTransformerPipeline } from '../src/data/transformers/pipeline';
@@ -55,12 +55,11 @@ async function fetchAndSaveToJson() {
     });
 
     // Create a file writer to save the posts
-    const fileWriter = createCsvWriter<TransformedPost>({
+    const fileWriter = createFileWriter<TransformedPost>({
       type: DataSource.FILE,
       options: {
-        path: './data/output/posts.csv',
-        encoding: 'utf-8',
-        columns: ['id', 'userId', 'title', 'body', 'timestamp']
+        path: './data/output/posts.json',
+        encoding: 'utf-8'
       }
     });
 
@@ -72,7 +71,7 @@ async function fetchAndSaveToJson() {
       operation: MapOperation.TO_UPPER_CASE,
       transform: (post) => ({
         ...post,
-        title: post.title.replaceAll('\n',' ').toUpperCase()
+        title: post.title.toUpperCase()
       })
     });
 
@@ -83,8 +82,7 @@ async function fetchAndSaveToJson() {
       operation: MapOperation.STRING,
       transform: (post) => ({
         ...post,
-        timestamp: new Date().toISOString(),
-        body: post.body.replaceAll('\n',' ')
+        timestamp: new Date().toISOString()
       })
     });
 
@@ -118,7 +116,7 @@ async function fetchAndSaveToJson() {
     await fileWriter.write(transformedPosts, {
       type: DataSource.FILE,
       options: {
-        path: './data/output/posts.csv',
+        path: './data/output/posts.json',
         encoding: 'utf-8'
       }
     });
@@ -167,16 +165,15 @@ const apiReader = createApiReader<Post>({
 });
 ```
 
-### 3. CSV Writer Configuration
+### 3. File Writer Configuration
 
-Configure the CSV writer with output options:
+Configure the file writer with output options:
 ```typescript
-const fileWriter = createCsvWriter<TransformedPost>({
+const fileWriter = createFileWriter<TransformedPost>({
   type: DataSource.FILE,
   options: {
-    path: './data/output/posts.csv',
-    encoding: 'utf-8',
-    columns: ['id', 'userId', 'title', 'body', 'timestamp']
+    path: './data/output/posts.json',
+    encoding: 'utf-8'
   }
 });
 ```
@@ -194,7 +191,7 @@ const titleTransformer = createMapTransformer<Post, Post>({
   operation: MapOperation.TO_UPPER_CASE,
   transform: (post) => ({
     ...post,
-    title: post.title.replaceAll('\n',' ').toUpperCase()
+    title: post.title.toUpperCase()
   })
 });
 ```
@@ -208,8 +205,7 @@ const timestampTransformer = createMapTransformer<Post, TransformedPost>({
   operation: MapOperation.STRING,
   transform: (post) => ({
     ...post,
-    timestamp: new Date().toISOString(),
-    body: post.body.replaceAll('\n',' ')
+    timestamp: new Date().toISOString()
   })
 });
 ```
@@ -229,7 +225,7 @@ const filterTransformer = createFilterTransformer<TransformedPost>({
 ## Running the Example
 
 ```bash
-ts-node examples/api-to-csv.example.ts
+ts-node examples/api-to-json.example.ts
 ```
 
 ## API Response Format
@@ -246,11 +242,24 @@ The input data from the API will have this structure:
 
 ## Output Format
 
-The generated CSV file will have this structure:
-```csv
-id,userId,title,body,timestamp
-1,1,EXAMPLE POST,Post content,2024-03-28T12:00:00.000Z
-2,1,ANOTHER POST,Another content,2024-03-28T12:00:00.000Z
+The generated JSON file will have this structure:
+```json
+[
+  {
+    "id": 1,
+    "userId": 1,
+    "title": "EXAMPLE POST",
+    "body": "Post content",
+    "timestamp": "2024-03-28T12:00:00.000Z"
+  },
+  {
+    "id": 2,
+    "userId": 1,
+    "title": "ANOTHER POST",
+    "body": "Another content",
+    "timestamp": "2024-03-28T12:00:00.000Z"
+  }
+]
 ```
 
 ## Error Handling
@@ -284,9 +293,9 @@ try {
    - String manipulation
 
 4. **File Handling**:
-   - CSV writing configuration
-   - Column specification
+   - JSON file writing
    - UTF-8 encoding
+   - Path configuration
 
 5. **Error Handling**:
    - Try-catch blocks
@@ -295,6 +304,6 @@ try {
 
 ## See Also
 
-- [API to JSON Example](./api-to-json.md)
-- [CSV Transform Example](./csv-transform.md)
+- [API to CSV Example](./api-to-csv.md)
+- [JSON Example](./json-example.md)
 - [Dynamic Transformer Example](./dynamic-transformer.md) 

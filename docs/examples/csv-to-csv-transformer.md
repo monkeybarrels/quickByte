@@ -1,145 +1,133 @@
 # CSV to CSV Transformer Example
 
-This example demonstrates how to transform data between different CSV formats using QuickByte's transformation capabilities.
+This example demonstrates how to read data from a CSV file, apply a simple transformation, and write the result to another CSV file using QuickByte's data transformation capabilities.
 
 ## Overview
 
-The example reads data from a source CSV file, applies transformations to the data, and writes the result to a new CSV file with a different structure.
+The example shows how to:
+- Read data from a CSV file
+- Apply a transformation to the data
+- Write the transformed data to a new CSV file
+- Handle file operations and errors
 
 ## Key Features
 
-- CSV reading with custom parsing
-- Data transformation between CSV formats
-- Custom field mapping
-- Data validation
-- CSV writing with custom formatting
+- CSV file reading and writing
+- Simple data transformation
+- Flexible data structure
+- File system integration
+- Error handling
 
-## Code Example
+## Complete Example
 
 ```typescript
-// Define input and output types
-interface InputRecord {
-  id: string;
-  name: string;
-  email: string;
-  age: string;
-  status: string;
-}
+import { DataFormat, DataSource } from '../src/data/types';
+import { createDataTransformer } from '../src/data/transformers/data.transformer';
+import { createCsvReader } from '../src/data/readers/csv.reader';
+import { createCsvWriter } from '../src/data/writers/csv.writer';
+import { promises as fs } from 'fs';
 
-interface OutputRecord {
-  userId: number;
-  fullName: string;
-  contact: {
-    email: string;
+interface User {
     age: number;
-  };
-  isActive: boolean;
+    [key: string]: any;
 }
 
-// Create CSV reader
-const csvReader = createCsvReader<InputRecord>({
-  type: DataSource.FILE,
-  options: {
-    path: './data/input/users.csv',
-    encoding: 'utf-8',
-    delimiter: ',',
-    headers: true
-  }
-});
+async function main() {
+    const csvContent = await fs.readFile('./data/input/users.csv', 'utf-8');
+    
+    const transformer = createDataTransformer<User, User>({
+        reader: createCsvReader(),
+        writer: createCsvWriter({
+            type: DataSource.FILE,
+            options: {
+                path: './data/output/users2.csv',
+                delimiter: ','
+            }
+        }),
+        sourceConfig: {
+            type: DataSource.FILE,
+            location: './data/input/users.csv',
+            options: {
+                format: DataFormat.CSV,
+                content: csvContent
+            }
+        },
+        writerConfig: {
+            type: DataSource.FILE,
+            options: {
+                path: './data/output/users2.csv',
+                format: DataFormat.CSV
+            }
+        },
+        transform: (user: User) => ({
+            ...user,
+            age: user.age + 1,
+        }),
+    });
 
-// Create CSV writer
-const csvWriter = createCsvWriter<OutputRecord>({
-  type: DataSource.FILE,
-  options: {
-    path: './data/output/transformed-users.csv',
-    encoding: 'utf-8',
-    delimiter: ',',
-    columns: ['userId', 'fullName', 'contact.email', 'contact.age', 'isActive']
-  }
-});
+    await transformer.transform();
+}
 
-// Create transformers
-const idTransformer = createMapTransformer<InputRecord, Partial<OutputRecord>>({
-  name: 'idTransformer',
-  description: 'Converts string ID to number',
-  field: 'userId',
-  operation: MapOperation.NUMBER,
-  transform: (record) => ({
-    userId: parseInt(record.id, 10)
-  })
-});
-
-const nameTransformer = createMapTransformer<InputRecord, Partial<OutputRecord>>({
-  name: 'nameTransformer',
-  description: 'Maps name to fullName',
-  field: 'fullName',
-  operation: MapOperation.STRING,
-  transform: (record) => ({
-    fullName: record.name
-  })
-});
-
-const contactTransformer = createMapTransformer<InputRecord, Partial<OutputRecord>>({
-  name: 'contactTransformer',
-  description: 'Creates contact object with email and age',
-  field: 'contact',
-  operation: MapOperation.OBJECT,
-  transform: (record) => ({
-    contact: {
-      email: record.email,
-      age: parseInt(record.age, 10)
-    }
-  })
-});
-
-const statusTransformer = createMapTransformer<InputRecord, Partial<OutputRecord>>({
-  name: 'statusTransformer',
-  description: 'Converts status to boolean isActive',
-  field: 'isActive',
-  operation: MapOperation.BOOLEAN,
-  transform: (record) => ({
-    isActive: record.status === 'active'
-  })
-});
-
-// Create validation transformer
-const validationTransformer = createFilterTransformer<OutputRecord>({
-  name: 'validationTransformer',
-  description: 'Validates transformed records',
-  field: 'userId',
-  operator: FilterOperator.GREATER_THAN,
-  value: 0,
-  predicate: (record) => 
-    record.userId > 0 && 
-    record.contact.age >= 0 && 
-    record.contact.email.includes('@')
-});
-
-// Create transformation pipeline
-const transformerPipeline = createTransformerPipeline<InputRecord, OutputRecord>([
-  idTransformer,
-  nameTransformer,
-  contactTransformer,
-  statusTransformer,
-  validationTransformer
-]);
+main().catch(console.error);
 ```
 
 ## How It Works
 
-1. **Data Reading**: The example reads from a source CSV file with a specific structure.
+### 1. Data Type Definition
 
-2. **Data Transformation**: Multiple transformers handle different aspects:
-   - `idTransformer`: Converts string IDs to numbers
-   - `nameTransformer`: Maps the name field
-   - `contactTransformer`: Creates a nested contact object
-   - `statusTransformer`: Converts status to boolean
-   - `validationTransformer`: Validates the transformed data
+The example defines a flexible interface for user data:
+```typescript
+interface User {
+    age: number;
+    [key: string]: any;
+}
+```
 
-3. **CSV Writing**: The transformed data is written to a new CSV file with:
-   - Custom column ordering
-   - Nested field support
-   - Proper type conversion
+This interface ensures that:
+- The `age` field is required and must be a number
+- Additional fields are allowed through the index signature
+
+### 2. File Reading
+
+Read the input CSV file:
+```typescript
+const csvContent = await fs.readFile('./data/input/users.csv', 'utf-8');
+```
+
+### 3. Transformer Configuration
+
+Set up the data transformer with reader, writer, and transformation logic:
+```typescript
+const transformer = createDataTransformer<User, User>({
+    reader: createCsvReader(),
+    writer: createCsvWriter({
+        type: DataSource.FILE,
+        options: {
+            path: './data/output/users2.csv',
+            delimiter: ','
+        }
+    }),
+    sourceConfig: {
+        type: DataSource.FILE,
+        location: './data/input/users.csv',
+        options: {
+            format: DataFormat.CSV,
+            content: csvContent
+        }
+    },
+    writerConfig: {
+        type: DataSource.FILE,
+        options: {
+            path: './data/output/users2.csv',
+            format: DataFormat.CSV
+        }
+    },
+    transform: (user: User) => ({
+        ...user,
+        age: user.age + 1,
+    }),
+});
+```
 
 ## Running the Example
 
@@ -149,44 +137,58 @@ ts-node examples/csv-to-csv.transformer.ts
 
 ## Input Format
 
-The input CSV should have the following structure:
+The input CSV file should have this structure:
 ```csv
-id,name,email,age,status
-1,John Doe,john@example.com,30,active
-2,Jane Smith,jane@example.com,25,inactive
+name,age,email
+John Doe,25,john@example.com
+Jane Smith,30,jane@example.com
 ```
 
 ## Output Format
 
-The output CSV will have this structure:
+The transformed CSV file will have this structure:
 ```csv
-userId,fullName,contact.email,contact.age,isActive
-1,John Doe,john@example.com,30,true
-2,Jane Smith,jane@example.com,25,false
+name,age,email
+John Doe,26,john@example.com
+Jane Smith,31,jane@example.com
 ```
 
 ## Error Handling
 
-The example includes validation and error handling:
+The example includes basic error handling:
 ```typescript
-try {
-  // Operation code
-} catch (error) {
-  console.error('Error:', error);
-  throw error;
-}
+main().catch(console.error);
 ```
 
 ## Best Practices Demonstrated
 
-1. **Type Safety**: Strong typing for input and output records
-2. **Validation**: Data validation before writing
-3. **Modularity**: Separate transformers for each transformation
-4. **Configuration**: Flexible CSV reading and writing options
-5. **Error Handling**: Comprehensive error catching and logging
+1. **Type Safety**: 
+   - Interface definition for user data
+   - Flexible data structure
+   - Type-safe transformations
+
+2. **File Operations**:
+   - UTF-8 encoding
+   - Proper file paths
+   - CSV format handling
+
+3. **Data Transformation**:
+   - Simple field modification
+   - Data structure preservation
+   - Efficient processing
+
+4. **Configuration**:
+   - Reader and writer setup
+   - Format specification
+   - Delimiter configuration
+
+5. **Error Handling**:
+   - Promise error catching
+   - Error logging
+   - Graceful failure handling
 
 ## See Also
 
 - [CSV Transform Example](./csv-transform.md)
-- [Dynamic Transformer Example](./dynamic-transformer.md)
-- [CSV to MongoDB Example](./csv-to-mongo.md) 
+- [CSV to MongoDB Example](./csv-to-mongo.md)
+- [MongoDB to CSV Example](./mongo-to-csv.md) 
