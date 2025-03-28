@@ -1,17 +1,21 @@
 /// <reference types="jest" />
 
-import { promises as fs } from 'fs';
+import { promises as fsPromises } from 'fs';
+import { createReadStream } from 'fs';
 import { createFileReader } from '../file.reader';
 import { DataError, DataSource, SourceConfig, DataFormat } from '../../types';
 import { Readable } from 'stream';
 
-// Mock fs promises
+// Mock fs module
 jest.mock('fs', () => ({
     promises: {
         readFile: jest.fn(),
     },
-    createReadStream: jest.fn(),
+    createReadStream: jest.fn(() => new Readable()),
 }));
+
+// Mock createReadStream
+const mockCreateReadStream = createReadStream as jest.Mock;
 
 describe('FileReader', () => {
     const mockConfig = {
@@ -30,38 +34,38 @@ describe('FileReader', () => {
     });
 
     describe('read method', () => {
-        it('should successfully read and parse JSON file', async () => {
+        test('should successfully read and parse JSON file', async () => {
             const mockData = [{ id: 1, name: 'Test' }];
-            (fs.readFile as jest.Mock).mockResolvedValue(JSON.stringify(mockData));
+            (fsPromises.readFile as jest.Mock).mockResolvedValue(JSON.stringify(mockData));
 
             const reader = createFileReader(mockConfig);
             const result = await reader.read(mockSourceConfig);
 
             expect(result).toEqual(mockData);
-            expect(fs.readFile).toHaveBeenCalledWith(mockConfig.path, {
+            expect(fsPromises.readFile).toHaveBeenCalledWith(mockConfig.path, {
                 encoding: mockConfig.encoding,
             });
         });
 
-        it('should use utf-8 encoding by default', async () => {
+        test('should use utf-8 encoding by default', async () => {
             const configWithoutEncoding = { 
                 path: '/test/path/data.json',
                 format: DataFormat.JSON
             };
             const mockData = [{ id: 1, name: 'Test' }];
-            (fs.readFile as jest.Mock).mockResolvedValue(JSON.stringify(mockData));
+            (fsPromises.readFile as jest.Mock).mockResolvedValue(JSON.stringify(mockData));
 
             const reader = createFileReader(configWithoutEncoding);
             await reader.read(mockSourceConfig);
 
-            expect(fs.readFile).toHaveBeenCalledWith(configWithoutEncoding.path, {
+            expect(fsPromises.readFile).toHaveBeenCalledWith(configWithoutEncoding.path, {
                 encoding: 'utf-8',
             });
         });
 
-        it('should throw DataError when file read fails', async () => {
+        test('should throw DataError when file read fails', async () => {
             const mockError = new Error('File not found');
-            (fs.readFile as jest.Mock).mockRejectedValue(mockError);
+            (fsPromises.readFile as jest.Mock).mockRejectedValue(mockError);
 
             const reader = createFileReader(mockConfig);
             await expect(reader.read(mockSourceConfig)).rejects.toThrow(DataError);
@@ -72,20 +76,20 @@ describe('FileReader', () => {
             });
         });
 
-        it('should throw DataError when JSON parsing fails', async () => {
-            (fs.readFile as jest.Mock).mockResolvedValue('invalid json');
+        test('should throw DataError when JSON parsing fails', async () => {
+            (fsPromises.readFile as jest.Mock).mockResolvedValue('invalid json');
 
             const reader = createFileReader(mockConfig);
             await expect(reader.read(mockSourceConfig)).rejects.toThrow(DataError);
         });
 
-        it('should handle CSV format with default delimiter', async () => {
+        test('should handle CSV format with default delimiter', async () => {
             const csvConfig = {
                 path: '/test/path/data.csv',
                 format: DataFormat.CSV
             };
             const mockData = 'id,name\n1,Test1\n2,Test2';
-            (fs.readFile as jest.Mock).mockResolvedValue(mockData);
+            (fsPromises.readFile as jest.Mock).mockResolvedValue(mockData);
 
             const reader = createFileReader(csvConfig);
             const result = await reader.read(mockSourceConfig);
@@ -97,14 +101,14 @@ describe('FileReader', () => {
             ]);
         });
 
-        it('should handle CSV format with custom delimiter', async () => {
+        test('should handle CSV format with custom delimiter', async () => {
             const csvConfig = {
                 path: '/test/path/data.csv',
                 format: DataFormat.CSV,
                 delimiter: '|'
             };
             const mockData = 'id|name\n1|Test1\n2|Test2';
-            (fs.readFile as jest.Mock).mockResolvedValue(mockData);
+            (fsPromises.readFile as jest.Mock).mockResolvedValue(mockData);
 
             const reader = createFileReader(csvConfig);
             const result = await reader.read(mockSourceConfig);
@@ -116,8 +120,8 @@ describe('FileReader', () => {
             ]);
         });
 
-        it('should handle unknown error types', async () => {
-            (fs.readFile as jest.Mock).mockRejectedValue('string error');
+        test('should handle unknown error types', async () => {
+            (fsPromises.readFile as jest.Mock).mockRejectedValue('string error');
 
             const reader = createFileReader(mockConfig);
             await expect(reader.read(mockSourceConfig)).rejects.toThrow(DataError);
@@ -128,12 +132,12 @@ describe('FileReader', () => {
             });
         });
 
-        it('should return empty array for unknown format', async () => {
+        test('should return empty array for unknown format', async () => {
             const unknownConfig = {
                 path: '/test/path/data.txt',
                 format: 'UNKNOWN' as DataFormat
             };
-            (fs.readFile as jest.Mock).mockResolvedValue('some content');
+            (fsPromises.readFile as jest.Mock).mockResolvedValue('some content');
 
             const reader = createFileReader(unknownConfig);
             const result = await reader.read(mockSourceConfig);
@@ -143,7 +147,7 @@ describe('FileReader', () => {
     });
 
     describe('readStream method', () => {
-        it('should successfully stream and parse JSON lines', async () => {
+        test('should successfully stream and parse JSON lines', async () => {
             const mockReadable = new Readable({
                 read() {}
             });
@@ -152,7 +156,7 @@ describe('FileReader', () => {
                 { id: 2, name: 'Test2' },
             ];
             
-            (require('fs').createReadStream as jest.Mock).mockReturnValue(mockReadable);
+            mockCreateReadStream.mockReturnValue(mockReadable);
             
             const reader = createFileReader(mockConfig);
             const stream = await reader.readStream(mockSourceConfig);
@@ -172,13 +176,13 @@ describe('FileReader', () => {
             expect(results).toEqual(mockData);
         });
 
-        it('should skip empty lines in the stream', async () => {
+        test('should skip empty lines in the stream', async () => {
             const mockReadable = new Readable({
                 read() {}
             });
             const mockData = { id: 1, name: 'Test1' };
             
-            (require('fs').createReadStream as jest.Mock).mockReturnValue(mockReadable);
+            mockCreateReadStream.mockReturnValue(mockReadable);
             
             const reader = createFileReader(mockConfig);
             const stream = await reader.readStream(mockSourceConfig);
@@ -200,7 +204,7 @@ describe('FileReader', () => {
     });
 
     describe('createFileReader factory', () => {
-        it('should create a new FileReader instance', () => {
+        test('should create a new FileReader instance', () => {
             const reader = createFileReader(mockConfig);
             expect(reader).toBeDefined();
             expect(reader).toHaveProperty('read');
