@@ -243,7 +243,7 @@ We welcome contributions to Quick Byte! This guide will help you get started wit
 
 ### Getting Help
 
-- Check our [documentation](docs)
+- Check our [documentation](docs/examples-guide.md)
 - Ask questions in issues
 
 Thank you for contributing to Quick Byte! 🚀
