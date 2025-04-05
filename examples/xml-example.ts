@@ -1,5 +1,5 @@
-import { XmlFormatter, createXmlFormatter } from '../src/data/formatters/xml.formatter';
-import { FormatConfig, DataFormat } from '../src/data/types';
+import { XmlFormatter, createXmlFormatter } from '../src/formatters/xml.formatter';
+import { FormatConfig, DataFormat } from '../src/types';
 
 interface User extends Record<string, unknown> {
     id: string;

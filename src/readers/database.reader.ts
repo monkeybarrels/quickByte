@@ -1,4 +1,4 @@
-import { DataReader, DatabaseReaderConfig, SourceConfig, DataError } from '../types';
+import { DataReader, DatabaseReaderConfig, SourceConfig, DataError, DataSource } from '../types';
 import { Pool } from 'pg';
 
 /**
@@ -47,14 +47,14 @@ export class DatabaseReader<T> implements DataReader<T> {
             if (error instanceof Error) {
                 throw new DataError(
                     `Database query failed: ${error.message}`,
-                    'database',
+                    DataSource.DATABASE,
                     'DB_ERROR',
                     error
                 );
             }
             throw new DataError(
                 'Database query failed: Unknown error',
-                'database',
+                DataSource.DATABASE,
                 'DB_ERROR'
             );
         }

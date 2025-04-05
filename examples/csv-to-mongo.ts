@@ -1,8 +1,8 @@
-import { createCsvReader } from '../src/data/readers/csv.reader';
-import { createMongoFormatter } from '../src/data/formatters/mongo.formatter';
-import { createFieldMappingTransformer, createFilterTransformer, createMapTransformer } from '../src/data/transformers/base.transformers';
-import { createTransformerPipeline } from '../src/data/transformers/pipeline';
-import { SourceConfig, FormatConfig, MongoConnection, DataSource, DataFormat, FilterOperator, MapOperation } from '../src/data/types';
+import { createCsvReader } from '../src/readers/csv.reader';
+import { createMongoFormatter } from '../src/formatters/mongo.formatter';
+import { createFieldMappingTransformer, createFilterTransformer, createMapTransformer } from '../src/transformers/base.transformers';
+import { createTransformerPipeline } from '../src/transformers/pipeline';
+import { SourceConfig, FormatConfig, MongoConnection, DataSource, DataFormat, FilterOperator, MapOperation } from '../src/types';
 import { promises as fs } from 'fs';
 
 // Example data structure

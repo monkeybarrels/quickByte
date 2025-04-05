@@ -1,5 +1,5 @@
-import { JsonFormatter, createJsonFormatter } from '../src/data/formatters/json.formatter';
-import { FormatConfig, DataFormat } from '../src/data/types';
+import { JsonFormatter, createJsonFormatter } from '../src/formatters/json.formatter';
+import { FormatConfig, DataFormat } from '../src/types';
 
 interface User extends Record<string, unknown> {
     id: string;
@@ -10,8 +10,11 @@ interface User extends Record<string, unknown> {
 
 async function jsonExample() {
     // JSON Formatter Example
-    const jsonFormatter = createJsonFormatter<User>({ pretty: true });
-    const formatConfig: FormatConfig = { type: 'json' as DataFormat };
+    const jsonFormatter = createJsonFormatter<User>();
+    const formatConfig: FormatConfig = { 
+        type: DataFormat.JSON,
+        options: { pretty: true }
+    };
 
     // Format data to JSON
     const users: User[] = [

@@ -1,7 +1,7 @@
-import { DataFormat, DataSource } from '../src/data/types';
-import { createDataTransformer } from '../src/data/transformers/data.transformer';
-import { createCsvReader } from '../src/data/readers/csv.reader';
-import { createCsvWriter } from '../src/data/writers/csv.writer';
+import { DataFormat, DataSource } from '../src/types';
+import { createDataTransformer } from '../src/transformers/data.transformer';
+import { createCsvReader } from '../src/readers/csv.reader';
+import { createCsvWriter } from '../src/writers/csv.writer';
 import { promises as fs } from 'fs';
 
 interface User {
@@ -31,6 +31,7 @@ async function main() {
         },
         writerConfig: {
             type: DataSource.FILE,
+            location: './data/output/users2.csv',
             options: {
                 path: './data/output/users2.csv',
                 format: DataFormat.CSV

@@ -1,8 +1,8 @@
-import { createApiReader } from '../src/data/readers/api.reader';
-import { createCsvWriter } from '../src/data/writers/csv.writer';
-import { DataSource, SourceConfig, TransformerType, MapOperation, FilterOperator } from '../src/data/types';
-import { createMapTransformer, createFilterTransformer } from '../src/data/transformers/base.transformers';
-import { createTransformerPipeline } from '../src/data/transformers/pipeline';
+import { createApiReader } from '../src/readers/api.reader';
+import { createCsvWriter } from '../src/writers/csv.writer';
+import { DataSource, SourceConfig, TransformerType, MapOperation, FilterOperator } from '../src/types';
+import { createMapTransformer, createFilterTransformer } from '../src/transformers/base.transformers';
+import { createTransformerPipeline } from '../src/transformers/pipeline';
 
 // Define the type for our API response
 interface Post {

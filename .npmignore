@@ -1,0 +1,31 @@
+# Source
+src/
+tests/
+
+# Config files
+.git/
+.gitignore
+.eslintrc
+.prettierrc
+tsconfig.json
+jest.config.js
+
+# Development
+.vscode/
+.idea/
+*.log
+.DS_Store
+
+# Documentation
+docs/
+*.md
+!README.md
+
+# Build
+dist/
+coverage/
+
+# Misc
+.editorconfig
+.env
+.env.* 

@@ -37,6 +37,7 @@ describe('DataTransformer', () => {
 
     const writerConfig: WriterConfig = {
         type: DataSource.FILE,
+        location: 'output.csv',
         options: { path: 'output.csv' }
     };
 

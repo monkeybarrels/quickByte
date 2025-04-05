@@ -1,5 +1,5 @@
-import { DatabaseFormatter, createDatabaseFormatter } from '../src/data/formatters/database.formatter';
-import { FormatConfig, DataFormat } from '../src/data/types';
+import { DatabaseFormatter, createDatabaseFormatter } from '../src/formatters/database.formatter';
+import { FormatConfig, DataFormat } from '../src/types';
 
 interface User extends Record<string, unknown> {
     id: string;

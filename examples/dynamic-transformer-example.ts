@@ -1,10 +1,10 @@
-import { createDynamicTransformerPipeline } from '../src/data/transformers/dynamic.transformer';
-import { DynamicTransformerConfigUnion } from '../src/data/transformers/dynamic.transformer';
-import { TransformerType, FilterOperator, MapOperation, DataSource, DataFormat } from '../src/data/types';
-import { createDataTransformer } from '../src/data/transformers/data.transformer';
+import { createDynamicTransformerPipeline } from '../src/transformers/dynamic.transformer';
+import { DynamicTransformerConfigUnion } from '../src/transformers/dynamic.transformer';
+import { TransformerType, FilterOperator, MapOperation, DataSource, DataFormat } from '../src/types';
+import { createDataTransformer } from '../src/transformers/data.transformer';
 import { MongoClient } from 'mongodb';
-import { CsvFormatter } from '../src/data/formatters/csv.formatter';
-import { FileWriter, FileWriterConfig } from '../src/data/writers/file.writer';
+import { CsvFormatter } from '../src/formatters/csv.formatter';
+import { FileWriter, FileWriterConfig } from '../src/writers/file.writer';
 // Example data structure
 interface UserData {
     userid: string;
@@ -85,7 +85,13 @@ async function dynamicTransformerExample() {
             write: async (data, config) => {
                 // Implement CSV write logic here
                 // This is a placeholder - you'll need to implement actual CSV writing
-                const fileWriter = new FileWriter(config as FileWriterConfig);
+                const fileWriter = new FileWriter({
+                    type: DataSource.FILE,
+                    options: {
+                        path: config.options?.path as string,
+                        encoding: config.options?.encoding as BufferEncoding
+                    }
+                });
                 await fileWriter.write(data, config);
             }
         },
@@ -116,6 +122,7 @@ async function dynamicTransformerExample() {
         },
         writerConfig: {
             type: DataSource.FILE,
+            location: './data/output/users.csv',
             options: {
                 path: './data/output/users.csv',
                 format: DataFormat.CSV,

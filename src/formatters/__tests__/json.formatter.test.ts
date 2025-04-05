@@ -31,7 +31,11 @@ describe('JsonFormatter', () => {
                 { id: 2, name: 'Test 2' }
             ];
 
-            const prettyFormatter = new JsonFormatter<TestData>({ pretty: true });
+            const prettyFormatter = new JsonFormatter<TestData>();
+            const formatConfig: FormatConfig = { 
+                type: DataFormat.JSON,
+                options: { pretty: true }
+            };
             const result = await prettyFormatter.format(data, formatConfig);
             expect(result).toBe(JSON.stringify(data, null, 2));
         });
@@ -73,11 +77,19 @@ describe('JsonFormatter', () => {
 describe('createJsonFormatter', () => {
     it('should create a JsonFormatter instance with default config', () => {
         const formatter = createJsonFormatter<TestData>();
+        const formatConfig: FormatConfig = { 
+            type: DataFormat.JSON,
+            options: { pretty: true }
+        };
         expect(formatter).toBeInstanceOf(JsonFormatter);
     });
 
     it('should create a JsonFormatter instance with custom config', () => {
-        const formatter = createJsonFormatter<TestData>({ pretty: true });
+        const formatter = createJsonFormatter<TestData>();
+        const formatConfig: FormatConfig = { 
+            type: DataFormat.JSON,
+            options: { pretty: true }
+        };
         expect(formatter).toBeInstanceOf(JsonFormatter);
     });
 }); 

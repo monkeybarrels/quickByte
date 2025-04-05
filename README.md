@@ -74,58 +74,7 @@ Quick Byte is a powerful, low-code data transformation pipeline designed to simp
 
 Let's create a basic transformation pipeline that converts CSV data to JSON format.
 
-1. **Install Quick Byte**
-```bash
-pip install quickbyte
-```
 
-2. **Create a Simple Pipeline**
-```python
-from quickbyte import Pipeline, CSVReader, JSONWriter
-
-# Create a new pipeline
-pipeline = Pipeline()
-
-# Add a CSV reader
-pipeline.add_reader(CSVReader(
-    file_path="data/input.csv",
-    headers=True
-))
-
-# Add a JSON writer
-pipeline.add_writer(JSONWriter(
-    file_path="data/output.json",
-    indent=2
-))
-
-# Run the pipeline
-pipeline.run()
-```
-
-3. **Sample Input CSV**
-```csv
-name,age,city
-John Doe,30,New York
-Jane Smith,25,San Francisco
-```
-
-4. **Output JSON**
-```json
-{
-  "data": [
-    {
-      "name": "John Doe",
-      "age": "30",
-      "city": "New York"
-    },
-    {
-      "name": "Jane Smith",
-      "age": "25",
-      "city": "San Francisco"
-    }
-  ]
-}
-```
 
 ### Next Steps
 - Explore more complex transformations in our [Documentation](#documentation)

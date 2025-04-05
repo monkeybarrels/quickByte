@@ -1,5 +1,5 @@
-import { CsvFormatter, createCsvFormatter } from '../src/data/formatters/csv.formatter';
-import { FormatConfig, DataFormat } from '../src/data/types';
+import { CsvFormatter, createCsvFormatter } from '../src/formatters/csv.formatter';
+import { FormatConfig, DataFormat } from '../src/types';
 
 interface User extends Record<string, unknown> {
     id: string;

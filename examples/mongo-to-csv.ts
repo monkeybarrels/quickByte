@@ -1,7 +1,7 @@
-import { createMongoReader } from '../src/data';
-import { createCsvFormatter } from '../src/data/formatters/csv.formatter';
-import { createFileWriter } from '../src/data/writers/file.writer';
-import { DataSource, SourceConfig, FormatConfig, DataFormat } from '../src/data/types';
+import { createMongoReader } from '../src/readers/mongo.reader';
+import { createCsvFormatter } from '../src/formatters/csv.formatter';
+import { createFileWriter } from '../src/writers/file.writer';
+import { DataSource, SourceConfig, FormatConfig, DataFormat } from '../src/types';
 
 // Define the type of data we expect from MongoDB
 interface Product {

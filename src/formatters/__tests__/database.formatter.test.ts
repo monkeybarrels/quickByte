@@ -1,5 +1,5 @@
 import { DatabaseFormatter, createDatabaseFormatter } from '../database.formatter';
-import { DataError, FormatConfig, DataFormat } from '../../../data/types';
+import { DataError, FormatConfig, DataFormat } from '../../types';
 import { Pool, QueryResult } from 'pg';
 
 // Mock the pg Pool

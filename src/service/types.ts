@@ -1,1 +1,0 @@
-export type Service<C, I, D, R> = (context: C, input: I, dependencies: D) => Promise<R>;

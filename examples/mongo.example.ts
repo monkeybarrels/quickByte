@@ -1,4 +1,7 @@
-import { createDataService, createMongoReader, createJsonFormatter } from '../src/data';
+import { createDataService } from '../src/service';
+import { createMongoReader } from '../src/readers/mongo.reader';
+import { createJsonFormatter } from '../src/formatters/json.formatter';
+import { DataSource, DataFormat } from '../src/types';
 
 // Define your data type
 interface Product {
@@ -21,9 +24,7 @@ const reader = createMongoReader<Product>({
 });
 
 // Create a JSON formatter
-const formatter = createJsonFormatter<Product>({
-    pretty: true
-});
+const formatter = createJsonFormatter<Product>();
 
 // Create the service
 const service = createDataService<Product>(reader, formatter);
@@ -33,16 +34,16 @@ const service = createDataService<Product>(reader, formatter);
     try {
         // Read all in-stock products
         const products = await service.read(
-            { type: 'mongodb', location: 'products' },
-            { type: 'json' }
+            { type: DataSource.MONGODB, location: 'products' },
+            { type: DataFormat.JSON, options: { pretty: true } }
         );
         console.log('Products:', products);
 
         // Stream products
         if (service.readStream) {
             const productStream = await service.readStream(
-                { type: 'mongodb', location: 'products' },
-                { type: 'json' }
+                { type: DataSource.MONGODB, location: 'products' },
+                { type: DataFormat.JSON, options: { pretty: true } }
             );
 
             for await (const product of productStream) {

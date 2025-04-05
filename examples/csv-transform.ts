@@ -1,8 +1,8 @@
-import { createCsvReader } from '../src/data/readers/csv.reader';
-import { createCsvFormatter } from '../src/data/formatters/csv.formatter';
-import { createFileWriter } from '../src/data/writers/file.writer';
-import { createDataTransformer } from '../src/data/transformers/data.transformer';
-import { DataSource, SourceConfig, FormatConfig, DataFormat } from '../src/data/types';
+import { createCsvReader } from '../src/readers/csv.reader';
+import { createCsvFormatter } from '../src/formatters/csv.formatter';
+import { createFileWriter } from '../src/writers/file.writer';
+import { createDataTransformer } from '../src/transformers/data.transformer';
+import { DataSource, SourceConfig, FormatConfig, DataFormat } from '../src/types';
 import { promises as fs } from 'fs';
 
 // Define the input and output data types
@@ -53,6 +53,7 @@ async function transformCsvFormat() {
         }),
         writerConfig: {
             type: DataSource.FILE,
+            location: outputPath,
             options: {
                 path: outputPath,
                 encoding: 'utf-8'
