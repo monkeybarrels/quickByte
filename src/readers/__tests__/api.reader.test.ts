@@ -112,5 +112,102 @@ describe('ApiReader', () => {
                 details: networkError
             });
         });
+
+        test('should handle unknown error types', async () => {
+            mockFetch.mockRejectedValueOnce('string error');
+
+            const reader = createApiReader(mockConfig);
+            
+            await expect(reader.read(mockSourceConfig)).rejects.toMatchObject({
+                message: 'API request failed: Unknown error',
+                source: DataSource.API,
+                code: 'API_ERROR'
+            });
+        });
+
+        test('should use default GET method when not specified', async () => {
+            const configWithoutMethod: ApiReaderConfig = {
+                url: mockConfig.url,
+                headers: mockConfig.headers
+            };
+            
+            const mockData = [{ id: 1, name: 'Default Method Test' }];
+            mockFetch.mockResolvedValueOnce({
+                ok: true,
+                json: async () => mockData
+            });
+
+            const reader = createApiReader(configWithoutMethod);
+            const result = await reader.read(mockSourceConfig);
+
+            expect(result).toEqual(mockData);
+            expect(mockFetch).toHaveBeenCalledWith(
+                configWithoutMethod.url,
+                {
+                    method: 'GET',
+                    headers: configWithoutMethod.headers,
+                    body: undefined
+                }
+            );
+        });
+
+        test('should handle undefined body in config', async () => {
+            const configWithUndefinedBody: ApiReaderConfig = {
+                ...mockConfig,
+                body: undefined
+            };
+            
+            const mockData = [{ id: 1, name: 'Undefined Body Test' }];
+            mockFetch.mockResolvedValueOnce({
+                ok: true,
+                json: async () => mockData
+            });
+
+            const reader = createApiReader(configWithUndefinedBody);
+            const result = await reader.read(mockSourceConfig);
+
+            expect(result).toEqual(mockData);
+            expect(mockFetch).toHaveBeenCalledWith(
+                configWithUndefinedBody.url,
+                {
+                    method: 'GET',
+                    headers: configWithUndefinedBody.headers,
+                    body: undefined
+                }
+            );
+        });
+
+        test('should use empty object for headers when not provided', async () => {
+            const configWithoutHeaders: ApiReaderConfig = {
+                url: mockConfig.url
+            };
+            
+            const mockData = [{ id: 1, name: 'No Headers Test' }];
+            mockFetch.mockResolvedValueOnce({
+                ok: true,
+                json: async () => mockData
+            });
+
+            const reader = createApiReader(configWithoutHeaders);
+            const result = await reader.read(mockSourceConfig);
+
+            expect(result).toEqual(mockData);
+            expect(mockFetch).toHaveBeenCalledWith(
+                configWithoutHeaders.url,
+                {
+                    method: 'GET',
+                    headers: {},
+                    body: undefined
+                }
+            );
+        });
+    });
+
+    describe('createApiReader factory', () => {
+        test('should create a new ApiReader instance', () => {
+            const reader = createApiReader(mockConfig);
+            expect(reader).toBeDefined();
+            expect(reader).toHaveProperty('read');
+        });
     });
 }); 

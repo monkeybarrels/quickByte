@@ -65,6 +65,49 @@ describe('ApiWriter', () => {
             );
         });
 
+        it('should use PATCH method when specified', async () => {
+            const patchConfig = {
+                ...mockConfig,
+                options: { ...mockConfig.options, method: 'PATCH' as const }
+            };
+            mockFetch.mockResolvedValueOnce({ ok: true });
+
+            const writer = createApiWriter(patchConfig);
+            await writer.write(testData, patchConfig);
+
+            expect(mockFetch).toHaveBeenCalledWith(
+                patchConfig.options.url,
+                {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(testData)
+                }
+            );
+        });
+
+        it('should use default POST method when method is not specified', async () => {
+            const defaultConfig = {
+                ...mockConfig,
+                options: { 
+                    url: mockConfig.options.url,
+                    headers: mockConfig.options.headers
+                }
+            };
+            mockFetch.mockResolvedValueOnce({ ok: true });
+
+            const writer = createApiWriter(defaultConfig);
+            await writer.write(testData, defaultConfig);
+
+            expect(mockFetch).toHaveBeenCalledWith(
+                defaultConfig.options.url,
+                {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(testData)
+                }
+            );
+        });
+
         it('should merge custom headers with defaults', async () => {
             const customConfig = {
                 ...mockConfig,
@@ -94,6 +137,29 @@ describe('ApiWriter', () => {
             );
         });
 
+        it('should use default headers when headers are not specified', async () => {
+            const noHeadersConfig = {
+                ...mockConfig,
+                options: { 
+                    url: mockConfig.options.url,
+                    method: mockConfig.options.method
+                }
+            };
+            mockFetch.mockResolvedValueOnce({ ok: true });
+
+            const writer = createApiWriter(noHeadersConfig);
+            await writer.write(testData, noHeadersConfig);
+
+            expect(mockFetch).toHaveBeenCalledWith(
+                noHeadersConfig.options.url,
+                {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(testData)
+                }
+            );
+        });
+
         it('should throw DataError when API request fails', async () => {
             mockFetch.mockResolvedValueOnce({ 
                 ok: false, 
@@ -118,6 +184,17 @@ describe('ApiWriter', () => {
                 source: DataSource.API,
                 code: 'API_ERROR',
                 message: expect.stringContaining('Network error')
+            });
+        });
+
+        it('should throw DataError when non-Error object is thrown', async () => {
+            mockFetch.mockRejectedValueOnce('String error');
+
+            const writer = createApiWriter(mockConfig);
+            await expect(writer.write(testData, mockConfig)).rejects.toMatchObject({
+                source: DataSource.API,
+                code: 'API_ERROR',
+                message: 'API writing failed: Unknown error'
             });
         });
     });
@@ -161,6 +238,31 @@ describe('ApiWriter', () => {
             );
         });
 
+        it('should use default batch size when not specified', async () => {
+            mockFetch.mockResolvedValue({ ok: true });
+
+            const defaultBatchConfig = {
+                ...mockConfig,
+                options: { 
+                    url: mockConfig.options.url,
+                    method: mockConfig.options.method,
+                    headers: mockConfig.options.headers
+                }
+            };
+            const writer = createApiWriter(defaultBatchConfig);
+
+            const asyncData = async function* () {
+                for (let i = 0; i < 150; i++) {
+                    yield { id: i, name: `Test${i}` };
+                }
+            };
+
+            await writer.writeStream(asyncData(), defaultBatchConfig);
+
+            // Should have made 2 calls: one with 100 items and one with 50 items
+            expect(mockFetch).toHaveBeenCalledTimes(2);
+        });
+
         it('should throw DataError when batch write fails', async () => {
             mockFetch.mockResolvedValueOnce({ ok: true })
                     .mockResolvedValueOnce({ 
@@ -184,6 +286,21 @@ describe('ApiWriter', () => {
                 source: DataSource.API,
                 code: 'API_ERROR',
                 message: expect.stringContaining('HTTP error! status: 500')
+            });
+        });
+
+        it('should throw DataError when non-Error object is thrown in stream', async () => {
+            mockFetch.mockRejectedValueOnce('String error');
+
+            const writer = createApiWriter(mockConfig);
+
+            const asyncData = async function* () {
+                yield testData[0];
+            };
+
+            await expect(writer.writeStream(asyncData(), mockConfig)).rejects.toMatchObject({
+                source: DataSource.API,
+                code: 'API_ERROR'
             });
         });
     });

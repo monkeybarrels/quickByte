@@ -23,7 +23,11 @@ export class JsonFormatter<T> implements DataFormatter<T> {
 
     async parse(data: string, config: FormatConfig): Promise<T[]> {
         try {
-            return JSON.parse(data);
+            const parsed = JSON.parse(data);
+            if (!Array.isArray(parsed)) {
+                throw new Error('Parsed JSON must be an array');
+            }
+            return parsed;
         } catch (error) {
             throw new DataError(
                 `Failed to parse JSON: ${error instanceof Error ? error.message : 'Unknown error'}`,
