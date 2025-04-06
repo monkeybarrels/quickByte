@@ -269,3 +269,24 @@ export interface WriterConfig {
 }
 
 export type DynamicTransformerConfigUnion = FieldMappingConfig | FilterConfig<any> | MapConfig<any, any>;
+
+export interface TransformationPlugin {
+  name: string;
+  version: string;
+  description: string;
+  validateDefinition: (definition: any) => Promise<boolean>;
+  execute: (definition: any, context: TransformationContext) => Promise<void>;
+}
+
+export interface TransformationContext {
+  input: any;
+  output: any;
+  logger: any;
+  config: any;
+}
+
+export interface PluginRegistry {
+  registerPlugin: (plugin: TransformationPlugin) => void;
+  getPlugin: (name: string) => TransformationPlugin | undefined;
+  listPlugins: () => TransformationPlugin[];
+}

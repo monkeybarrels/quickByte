@@ -196,3 +196,100 @@ We welcome contributions to Quick Byte! This guide will help you get started wit
 - Ask questions in issues
 
 Thank you for contributing to Quick Byte! 🚀
+
+# QuickByte Monorepo
+
+A flexible, low-code data transformation pipeline for Node.js with a plugin system.
+
+## Packages
+
+This monorepo contains the following packages:
+
+- **quickbyte**: The core data transformation library
+- **quickbyte-pipelines**: A plugin for defining transformation pipelines in JSON
+
+## Development
+
+### Setup
+
+```bash
+# Install dependencies
+npm install
+
+# Build all packages
+npm run build
+
+# Run tests
+npm run test
+
+# Lint code
+npm run lint
+```
+
+## Publishing
+
+### Conventional Commits
+
+This project uses conventional commits to determine version bumps. Use the commit helper:
+
+```bash
+npm run commit
+```
+
+This will guide you through creating properly formatted commits:
+- `feat:` for new features (minor version)
+- `fix:` for bug fixes (patch version)
+- `feat!:` or `fix!:` for breaking changes (major version)
+- `perf:` for performance improvements (patch version)
+- `refactor:` for code refactoring (patch version)
+
+### Version Analysis
+
+Before publishing, you can analyze commits to determine the appropriate version bump:
+
+```bash
+# Analyze quickbyte package
+npm run analyze:quickbyte
+
+# Analyze pipelines package
+npm run analyze:pipelines
+```
+
+This will:
+- Analyze commits since the last version
+- Count breaking changes, new features, and bug fixes
+- Suggest the appropriate version bump
+- Show the command to run for the suggested bump
+
+### Publishing Packages
+
+#### Manual Publishing
+
+```bash
+# Publish all packages
+npm run publish-packages
+
+# Publish specific packages
+npm run publish:quickbyte
+npm run publish:pipelines
+```
+
+#### Versioned Publishing
+
+```bash
+# Patch version (bug fixes)
+npm run release:quickbyte:patch
+npm run release:pipelines:patch
+
+# Minor version (new features)
+npm run release:quickbyte:minor
+npm run release:pipelines:minor
+
+# Major version (breaking changes)
+npm run release:quickbyte:major
+npm run release:pipelines:major
+```
+
+## License
+
+MIT

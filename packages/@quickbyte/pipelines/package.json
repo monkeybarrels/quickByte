@@ -1,0 +1,58 @@
+{
+  "name": "@quickbyte/pipelines",
+  "version": "0.1.0",
+  "description": "JSON definition plugin for QuickByte transformation pipeline",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "lint": "eslint src/**/*.ts",
+    "clean": "rm -rf dist",
+    "prepare": "pnpm build",
+    "prepublishOnly": "pnpm run build && pnpm test"
+  },
+  "keywords": [
+    "quickbyte",
+    "plugin",
+    "pipeline",
+    "json",
+    "transformation"
+  ],
+  "author": "Jim Livingston",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/monkeybarrels/quickByte.git"
+  },
+  "bugs": {
+    "url": "https://github.com/monkeybarrels/quickbyte/issues"
+  },
+  "homepage": "https://github.com/monkeybarrels/quickbyte#readme",
+  "peerDependencies": {
+    "@quickbyte/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.28",
+    "@typescript-eslint/eslint-plugin": "^6.15.0",
+    "@typescript-eslint/parser": "^6.15.0",
+    "eslint": "^8.56.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3",
+    "@jest/globals": "^29.7.0",
+    "@types/jest": "^29.5.12",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.2"
+  },
+  "dependencies": {
+    "mongodb": "^6.15.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
