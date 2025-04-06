@@ -1,6 +1,6 @@
 {
   "name": "@quickbyte/core",
-  "version": "0.1.5",
+  "version": "0.1.7",
   "description": "A flexible, low-code data transformation pipeline for Node.js",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
