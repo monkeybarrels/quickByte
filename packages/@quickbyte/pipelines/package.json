@@ -1,6 +1,6 @@
 {
   "name": "@quickbyte/pipelines",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "JSON definition plugin for QuickByte transformation pipeline",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
