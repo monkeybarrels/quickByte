@@ -1,6 +1,6 @@
 {
   "name": "@quickbyte/core",
-  "version": "0.1.3",
+  "version": "0.1.5",
   "description": "A flexible, low-code data transformation pipeline for Node.js",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -15,7 +15,14 @@
     "lint": "eslint src/**/*.ts",
     "clean": "rm -rf dist",
     "prepare": "pnpm build",
-    "prepublishOnly": "pnpm run build && pnpm test"
+    "prepublishOnly": "pnpm run build && pnpm test",
+    "version:patch": "pnpm version patch",
+    "version:minor": "pnpm version minor",
+    "version:major": "pnpm version major",
+    "version:pre": "pnpm version prerelease",
+    "version:prepatch": "pnpm version prepatch",
+    "version:preminor": "pnpm version preminor",
+    "version:premajor": "pnpm version premajor"
   },
   "keywords": [
     "data-transformation",
@@ -69,4 +76,4 @@
   "publishConfig": {
     "access": "public"
   }
-} 
+}
