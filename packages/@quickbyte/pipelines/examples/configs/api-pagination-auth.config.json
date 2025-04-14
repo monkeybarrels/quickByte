@@ -1,0 +1,99 @@
+{
+  "source": {
+    "type": "API",
+    "location": "https://api.example.com/users",
+    "options": {
+      "method": "GET",
+      "headers": {
+        "Accept": "application/json",
+        "Authorization": "Bearer your-auth-token-here"
+      },
+      "pagination": {
+        "enabled": true,
+        "type": "offset",
+        "paramName": "offset",
+        "pageSize": 20,
+        "maxPages": 5
+      },
+      "responsePath": "data.items"
+    }
+  },
+  "writer": {
+    "type": "API",
+    "location": "https://api.example.com/transformed-users",
+    "options": {
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "X-API-Key": "your-api-key-here"
+      },
+      "batchSize": 10
+    }
+  },
+  "transformers": [
+    {
+      "type": "FILTER",
+      "name": "filterActiveUsers",
+      "description": "Filter only active users",
+      "condition": {
+        "field": "status",
+        "operator": "EQUALS",
+        "value": "active"
+      }
+    },
+    {
+      "type": "FIELD_MAPPING",
+      "name": "renameFields",
+      "description": "Rename fields to match target schema",
+      "fieldMap": {
+        "id": "userId",
+        "fullName": "name",
+        "emailAddress": "email"
+      }
+    },
+    {
+      "type": "ADD_FIELD",
+      "name": "addTimestamp",
+      "description": "Add current timestamp",
+      "field": "processedAt",
+      "value": "2024-03-14T12:00:00Z"
+    },
+    {
+      "type": "DATE_TRANSFORM",
+      "name": "formatDate",
+      "description": "Format the processed date",
+      "field": "processedAt",
+      "operation": "FORMAT",
+      "format": "YYYY-MM-DD HH:mm:ss",
+      "targetFormat": "YYYY-MM-DD HH:mm:ss"
+    },
+    {
+      "type": "CONDITIONAL",
+      "name": "handlePremiumUsers",
+      "description": "Different transformations for premium/standard users",
+      "condition": {
+        "field": "subscriptionType",
+        "operator": "EQUALS",
+        "value": "premium"
+      },
+      "ifTrue": [
+        {
+          "type": "ADD_FIELD",
+          "name": "addPremiumFeatures",
+          "description": "Add premium features for premium users",
+          "field": "features",
+          "value": ["advanced-analytics", "priority-support", "custom-themes"]
+        }
+      ],
+      "ifFalse": [
+        {
+          "type": "ADD_FIELD",
+          "name": "addStandardFeatures",
+          "description": "Add standard features for regular users",
+          "field": "features",
+          "value": ["basic-analytics", "email-support"]
+        }
+      ]
+    }
+  ]
+} 

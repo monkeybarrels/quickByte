@@ -1,0 +1,112 @@
+{
+  "source": {
+    "type": "CSV",
+    "location": "./input.csv",
+    "options": {
+      "delimiter": ",",
+      "headers": true
+    }
+  },
+  "writer": {
+    "type": "CSV",
+    "location": "./output.csv",
+    "options": {
+      "delimiter": ",",
+      "headers": true
+    }
+  },
+  "transformers": [
+    {
+      "type": "MAP",
+      "name": "convertTypes",
+      "description": "Convert string fields to appropriate types",
+      "operations": [
+        {
+          "field": "isActive",
+          "operation": "BOOLEAN"
+        }
+      ]
+    },
+    {
+      "type": "VALIDATE",
+      "name": "validateInput",
+      "description": "Validate input fields",
+      "rules": [
+        {
+          "field": "firstName",
+          "rule": "required"
+        },
+        {
+          "field": "firstName",
+          "rule": "regex",
+          "options": {
+            "pattern": "^[A-Za-z]+$"
+          }
+        }
+      ]
+    },
+    {
+      "type": "FIELD_MAPPING",
+      "name": "renameFields",
+      "description": "Rename firstName to name",
+      "fieldMap": {
+        "firstName": "name"
+      }
+    },
+    {
+      "type": "ADD_FIELD",
+      "name": "addTimestamp",
+      "description": "Add current timestamp",
+      "field": "createdAt",
+      "value": "2024-03-14T12:00:00Z"
+    },
+    {
+      "type": "DATE_TRANSFORM",
+      "name": "formatDate",
+      "description": "Format the creation date",
+      "field": "createdAt",
+      "operation": "FORMAT",
+      "format": "YYYY-MM-DD HH:mm:ss",
+      "targetFormat": "YYYY-MM-DD HH:mm:ss"
+    },
+    {
+      "type": "CONDITIONAL",
+      "name": "handleActiveUsers",
+      "description": "Different transformations for active/inactive users",
+      "condition": {
+        "field": "isActive",
+        "operator": "EQUALS",
+        "value": true
+      },
+      "ifTrue": [
+        {
+          "type": "ADD_FIELD",
+          "name": "addGreeting",
+          "description": "Add greeting for active users",
+          "field": "greeting",
+          "value": "Hello, ${name}!"
+        }
+      ],
+      "ifFalse": [
+        {
+          "type": "ADD_FIELD",
+          "name": "addInactiveMessage",
+          "description": "Add message for inactive users",
+          "field": "status",
+          "value": "Account inactive"
+        }
+      ]
+    },
+    {
+      "type": "MAP",
+      "name": "transformName",
+      "description": "Transform the name field",
+      "operations": [
+        {
+          "field": "name",
+          "operation": "TO_UPPER_CASE"
+        }
+      ]
+    }
+  ]
+} 

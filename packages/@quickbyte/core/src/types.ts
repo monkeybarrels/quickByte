@@ -141,9 +141,21 @@ export interface MongoConnection {
 }
 
 export interface MongoReaderConfig {
-    connection: MongoConnection;
-    query?: Record<string, unknown>;
-    options?: Record<string, unknown>;
+    connection: {
+        uri: string;
+        database: string;
+        collection: string;
+        options?: Record<string, unknown>;
+    };
+    query: Record<string, unknown> | unknown[];
+    options?: {
+        projection?: Record<string, unknown>;
+        sort?: Record<string, unknown>;
+        limit?: number;
+        skip?: number;
+        isAggregation?: boolean;
+        [key: string]: unknown;
+    };
 }
 
 /**

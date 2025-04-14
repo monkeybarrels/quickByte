@@ -1,17 +1,26 @@
 {
   "name": "@quickbyte/pipelines",
   "version": "0.1.1",
-  "description": "JSON definition plugin for QuickByte transformation pipeline",
+  "description": "Flexible data transformation pipeline for QuickByte",
+  "type": "module",
   "main": "dist/index.js",
+  "module": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
   "files": [
     "dist",
     "README.md",
     "LICENSE"
   ],
   "scripts": {
-    "build": "tsc",
-    "test": "jest",
+    "build": "tsc && tsc --build tsconfig.cjs.json",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest",
     "lint": "eslint src/**/*.ts",
     "clean": "rm -rf dist",
     "prepare": "pnpm build",
@@ -26,10 +35,10 @@
   },
   "keywords": [
     "quickbyte",
-    "plugin",
     "pipeline",
-    "json",
-    "transformation"
+    "data",
+    "transformation",
+    "etl"
   ],
   "author": "Jim Livingston",
   "license": "MIT",
@@ -42,7 +51,8 @@
   },
   "homepage": "https://github.com/monkeybarrels/quickbyte#readme",
   "peerDependencies": {
-    "@quickbyte/core": "workspace:*"
+    "@quickbyte/core": "workspace:*",
+    "typescript": "^5.0.0"
   },
   "devDependencies": {
     "@types/node": "^20.17.28",
@@ -54,9 +64,15 @@
     "@jest/globals": "^29.7.0",
     "@types/jest": "^29.5.12",
     "jest": "^29.7.0",
-    "ts-jest": "^29.1.2"
+    "ts-jest": "^29.1.2",
+    "@types/bun": "latest",
+    "axios-mock-adapter": "^1.21.5"
   },
   "dependencies": {
+    "@quickbyte/core": "^0.1.10",
+    "axios": "^1.8.4",
+    "csv-parse": "^5.6.0",
+    "csv-stringify": "^6.5.2",
     "mongodb": "^6.15.0"
   },
   "publishConfig": {

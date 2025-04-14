@@ -1,0 +1,77 @@
+{
+  "source": {
+    "type": "MONGODB",
+    "location": "mongodb://localhost:27017/quickbyte_demo",
+    "collection": "users"
+  },
+  "writer": {
+    "type": "MONGODB",
+    "location": "mongodb://localhost:27017/quickbyte_demo",
+    "collection": "enriched_users"
+  },
+  "transformers": [
+    {
+      "type": "ADD_FIELD",
+      "name": "fetchApiData",
+      "description": "Fetch additional data from API for each user",
+      "field": "apiData",
+      "value": "${id}"
+    },
+    {
+      "type": "MAP",
+      "name": "enrichUserData",
+      "description": "Enrich user data with API information",
+      "operations": [
+        {
+          "field": "apiData",
+          "operation": "PARSE_JSON"
+        }
+      ]
+    },
+    {
+      "type": "FIELD_MAPPING",
+      "name": "mergeApiData",
+      "description": "Merge API data into user record",
+      "fieldMap": {
+        "apiData.profile": "profile",
+        "apiData.preferences": "preferences",
+        "apiData.lastLogin": "lastLogin"
+      }
+    },
+    {
+      "type": "ADD_FIELD",
+      "name": "addEnrichmentTimestamp",
+      "description": "Add timestamp when data was enriched",
+      "field": "enrichedAt",
+      "value": "2024-03-14T12:00:00Z"
+    },
+    {
+      "type": "CONDITIONAL",
+      "name": "handlePremiumUsers",
+      "description": "Different transformations for premium/standard users",
+      "condition": {
+        "field": "subscriptionType",
+        "operator": "EQUALS",
+        "value": "premium"
+      },
+      "ifTrue": [
+        {
+          "type": "ADD_FIELD",
+          "name": "addPremiumFeatures",
+          "description": "Add premium features for premium users",
+          "field": "features",
+          "value": ["advanced-analytics", "priority-support", "custom-themes"]
+        }
+      ],
+      "ifFalse": [
+        {
+          "type": "ADD_FIELD",
+          "name": "addStandardFeatures",
+          "description": "Add standard features for regular users",
+          "field": "features",
+          "value": ["basic-analytics", "email-support"]
+        }
+      ]
+    }
+  ]
+} 

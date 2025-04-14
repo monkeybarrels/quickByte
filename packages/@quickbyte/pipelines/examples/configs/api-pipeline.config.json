@@ -1,0 +1,50 @@
+{
+  "reader": {
+    "type": "API",
+    "location": "http://localhost:1337/api/articles",
+    "options": {
+      "method": "GET",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "responsePath": "data"
+    }
+  },
+  "transformers": [
+    {
+      "type": "MAP",
+      "name": "Extract Fields",
+      "operations": [
+        {
+          "field": "data",
+          "operation": "PARSE_JSON"
+        }
+      ]
+    },
+    {
+      "type": "FIELD_MAPPING",
+      "name": "Map Article Fields",
+      "fieldMap": {
+        "id": "id",
+        "title": "title",
+        "description": "description",
+        "publishedAt": "publishedAt"
+      }
+    },
+    {
+      "type": "ADD_FIELD",
+      "name": "Add Processing Info",
+      "field": "processedAt",
+      "value": "2024-03-14T12:00:00Z"
+    }
+  ],
+  "writer": {
+    "type": "CSV",
+    "location": "examples/configs/output/api-data.csv",
+    "options": {
+      "delimiter": ",",
+      "headers": true,
+      "columns": ["title", "description", "id", "publishedAt", "processedAt"]
+    }
+  }
+} 

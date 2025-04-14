@@ -12,7 +12,8 @@ describe('MongoReader', () => {
             uri: 'mongodb://localhost:27017',
             database: 'test',
             collection: 'products'
-        }
+        },
+        query: {}
     };
 
     const mockProducts = [

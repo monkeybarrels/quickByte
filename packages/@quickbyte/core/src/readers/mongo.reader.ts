@@ -1,5 +1,5 @@
 import { DataReader, MongoReaderConfig, SourceConfig, DataError, DataSource } from '../types';
-import { MongoClient } from 'mongodb';
+import { MongoClient, Document, FindOptions } from 'mongodb';
 
 /**
  * A data reader implementation for MongoDB that supports both batch and streaming reads.
@@ -36,9 +36,16 @@ export class MongoReader<T> implements DataReader<T> {
                 .db(this.config.connection.database)
                 .collection(this.config.connection.collection);
             
-            const query = this.config.query || {};
-            const cursor = collection.find(query, this.config.options);
-            return await cursor.toArray() as T[];
+            if (this.config.options?.isAggregation && Array.isArray(this.config.query)) {
+                const cursor = collection.aggregate(this.config.query as Document[]);
+                return await cursor.toArray() as T[];
+            } else {
+                const query = this.config.query as Record<string, unknown> || {};
+                const options = { ...this.config.options };
+                delete options.isAggregation;
+                const cursor = collection.find(query, options as FindOptions<Document>);
+                return await cursor.toArray() as T[];
+            }
         } catch (error: unknown) {
             if (error instanceof Error) {
                 throw new DataError(
@@ -71,8 +78,15 @@ export class MongoReader<T> implements DataReader<T> {
             .db(this.config.connection.database)
             .collection(this.config.connection.collection);
 
-        const query = this.config.query || {};
-        const cursor = collection.find(query, this.config.options);
+        let cursor;
+        if (this.config.options?.isAggregation && Array.isArray(this.config.query)) {
+            cursor = collection.aggregate(this.config.query as Document[]);
+        } else {
+            const query = this.config.query as Record<string, unknown> || {};
+            const options = { ...this.config.options };
+            delete options.isAggregation;
+            cursor = collection.find(query, options as FindOptions<Document>);
+        }
 
         return {
             async *[Symbol.asyncIterator]() {

@@ -1,0 +1,68 @@
+{
+  "source": {
+    "type": "MONGODB",
+    "location": "mongodb://localhost:27017",
+    "collection": "users",
+    "options": {
+      "useNewUrlParser": true,
+      "useUnifiedTopology": true
+    }
+  },
+  "transformers": [
+    {
+      "type": "FIELD_MAPPING",
+      "name": "Flatten User Structure",
+      "fieldMap": {
+        "name.first": "firstName",
+        "name.last": "lastName",
+        "contact.email": "email",
+        "contact.phone": "phone"
+      }
+    },
+    {
+      "type": "MAP",
+      "name": "Normalize Contact Information",
+      "operations": [
+        {
+          "field": "email",
+          "operation": "TO_LOWER_CASE"
+        },
+        {
+          "field": "phone",
+          "operation": "TRIM"
+        }
+      ]
+    },
+    {
+      "type": "ADD_FIELD",
+      "name": "Create Full Name",
+      "field": "fullName",
+      "value": "${firstName} ${lastName}"
+    },
+    {
+      "type": "VALIDATE",
+      "name": "Validate Contact Information",
+      "rules": [
+        {
+          "field": "email",
+          "rule": "email",
+          "message": "Invalid email format"
+        },
+        {
+          "field": "phone",
+          "rule": "required",
+          "message": "Phone number is required"
+        }
+      ]
+    }
+  ],
+  "writer": {
+    "type": "MONGODB",
+    "location": "mongodb://localhost:27017",
+    "collection": "enriched_users",
+    "options": {
+      "useNewUrlParser": true,
+      "useUnifiedTopology": true
+    }
+  }
+} 

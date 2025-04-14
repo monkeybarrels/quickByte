@@ -1,0 +1,53 @@
+{
+  "source": {
+    "type": "CSV",
+    "location": "data/users.csv",
+    "options": {
+      "delimiter": ",",
+      "headers": true,
+      "skip_empty_lines": true
+    }
+  },
+  "transformers": [
+    {
+      "type": "MAP",
+      "name": "Convert Data Types",
+      "operations": [
+        {
+          "field": "age",
+          "operation": "NUMBER"
+        },
+        {
+          "field": "active",
+          "operation": "BOOLEAN"
+        }
+      ]
+    },
+    {
+      "type": "ADD_FIELD",
+      "name": "Add Timestamp",
+      "field": "processedAt",
+      "value": "${new Date().toISOString()}"
+    },
+    {
+      "type": "FILTER",
+      "name": "Filter Active Users",
+      "condition": {
+        "field": "active",
+        "operator": "EQUALS",
+        "value": true
+      }
+    }
+  ],
+  "writer": {
+    "type": "API",
+    "location": "https://api.example.com/users",
+    "options": {
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer ${process.env.API_TOKEN}"
+      }
+    }
+  }
+} 
