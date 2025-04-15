@@ -1,16 +1,16 @@
 {
   "name": "@quickbyte/pipelines",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Flexible data transformation pipeline for QuickByte",
   "type": "module",
-  "main": "dist/index.js",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/esm/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
+      "types": "./dist/esm/index.d.ts",
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js"
     }
   },
   "files": [
@@ -19,7 +19,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "tsc && tsc --build tsconfig.cjs.json",
+    "build": "tsc && tsc --build tsconfig.cjs.json && mkdir -p dist && find dist/esm -type f -exec cp {} dist/ \\; && find dist/cjs -type f -exec cp {} dist/ \\;",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest",
     "lint": "eslint src/**/*.ts",
     "clean": "rm -rf dist",
@@ -51,7 +51,6 @@
   },
   "homepage": "https://github.com/monkeybarrels/quickbyte#readme",
   "peerDependencies": {
-    "@quickbyte/core": "workspace:*",
     "typescript": "^5.0.0"
   },
   "devDependencies": {
@@ -69,7 +68,6 @@
     "axios-mock-adapter": "^1.21.5"
   },
   "dependencies": {
-    "@quickbyte/core": "^0.1.10",
     "axios": "^1.8.4",
     "csv-parse": "^5.6.0",
     "csv-stringify": "^6.5.2",

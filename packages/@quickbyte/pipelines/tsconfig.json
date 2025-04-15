@@ -12,14 +12,8 @@
     "resolveJsonModule": true,
     "composite": true,
     "declaration": true,
-    "declarationDir": "./dist/esm",
-    "paths": {
-      "@quickbyte/core": ["../core/src"]
-    }
+    "declarationDir": "./dist/esm"
   },
   "include": ["src/**/*.ts", "examples/**/*.ts"],
-  "exclude": ["node_modules", "dist"],
-  "references": [
-    { "path": "../core" }
-  ]
+  "exclude": ["node_modules", "dist"]
 } 
