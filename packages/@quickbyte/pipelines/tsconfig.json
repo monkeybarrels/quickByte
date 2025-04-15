@@ -8,12 +8,14 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "outDir": "./dist/esm",
-    "rootDir": ".",
+    "rootDir": "src",
     "resolveJsonModule": true,
     "composite": true,
     "declaration": true,
-    "declarationDir": "./dist/esm"
+    "declarationDir": "./dist/esm",
+    "declarationMap": true,
+    "sourceMap": true
   },
-  "include": ["src/**/*.ts", "examples/**/*.ts"],
+  "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist"]
 } 

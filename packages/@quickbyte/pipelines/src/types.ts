@@ -29,10 +29,35 @@ export interface FlexiblePipelineConfig {
   writer: Writer;
 }
 
+// Configuration types for creating components from config
+export interface ReaderConfig {
+  type: string;
+  location: string;
+  options?: Record<string, any>;
+}
+
+export interface TransformerConfig {
+  type: string;
+  name?: string;
+  [key: string]: any;
+}
+
+export interface WriterConfig {
+  type: string;
+  location: string;
+  options?: Record<string, any>;
+}
+
+export interface PipelineConfig {
+  reader: ReaderConfig;
+  transformers: TransformerConfig[];
+  writer: WriterConfig;
+}
+
 // Factory functions for creating components
-export type ReaderFactory = (config: any) => Reader;
-export type TransformerFactory = (config: any) => Transformer;
-export type WriterFactory = (config: any) => Writer;
+export type ReaderFactory = (config: ReaderConfig) => Reader;
+export type TransformerFactory = (config: TransformerConfig) => Transformer;
+export type WriterFactory = (config: WriterConfig) => Writer;
 
 // Registry for factories
 export interface ComponentRegistry {

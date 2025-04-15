@@ -15,6 +15,12 @@ export * from './writers';
 // Export factory
 export * from './factory';
 
+// Export config pipeline
+export * from './pipelines/config-pipeline';
+
+// Export json pipeline
+export * from './pipelines/json-pipeline';
+
 // Register default components
 import { registerDefaultComponents } from './factory';
 registerDefaultComponents(); 
