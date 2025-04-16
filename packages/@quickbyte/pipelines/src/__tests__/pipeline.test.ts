@@ -219,4 +219,77 @@ describe('FlexiblePipeline', () => {
       expect(mockWriter.disconnect).toHaveBeenCalled();
     });
   });
+
+  describe('pipeline modification methods', () => {
+    it('should add a transformer to the pipeline', () => {
+      const pipeline = new FlexiblePipeline({
+        reader: mockReader,
+        writer: mockWriter
+      });
+
+      pipeline.addTransformer(mockTransformer);
+      
+      expect(pipeline).toHaveProperty('transformers');
+      expect(pipeline['transformers']).toContain(mockTransformer);
+    });
+
+    it('should update the writer', () => {
+      const pipeline = new FlexiblePipeline({
+        reader: mockReader,
+        writer: mockWriter
+      });
+
+      const newWriter: Writer = {
+        write: jest.fn().mockResolvedValue(undefined)
+      };
+
+      pipeline.updateWriter(newWriter);
+      
+      expect(pipeline['writer']).toBe(newWriter);
+    });
+
+    it('should update the reader', () => {
+      const pipeline = new FlexiblePipeline({
+        reader: mockReader,
+        writer: mockWriter
+      });
+
+      const newReader: Reader = {
+        read: jest.fn().mockResolvedValue(['new_data'])
+      };
+
+      pipeline.updateReader(newReader);
+      
+      expect(pipeline['reader']).toBe(newReader);
+    });
+
+    it('should use updated components in pipeline execution', async () => {
+      const pipeline = new FlexiblePipeline({
+        reader: mockReader,
+        writer: mockWriter
+      });
+
+      const newReader: Reader = {
+        read: jest.fn().mockResolvedValue(['new_data']),
+        connect: jest.fn().mockResolvedValue(undefined),
+        disconnect: jest.fn().mockResolvedValue(undefined)
+      };
+
+      const newWriter: Writer = {
+        write: jest.fn().mockResolvedValue(undefined),
+        connect: jest.fn().mockResolvedValue(undefined),
+        disconnect: jest.fn().mockResolvedValue(undefined)
+      };
+
+      pipeline.updateReader(newReader);
+      pipeline.updateWriter(newWriter);
+      pipeline.addTransformer(mockTransformer);
+
+      await pipeline.run();
+
+      expect(newReader.read).toHaveBeenCalled();
+      expect(mockTransformer.transform).toHaveBeenCalledWith(['new_data']);
+      expect(newWriter.write).toHaveBeenCalledWith(['transformed_new_data']);
+    });
+  });
 }); 

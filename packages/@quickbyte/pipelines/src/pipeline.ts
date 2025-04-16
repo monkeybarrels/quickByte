@@ -21,6 +21,30 @@ export class FlexiblePipeline {
   }
 
   /**
+   * Add a transformer to the pipeline
+   * @param transformer The transformer to add
+   */
+  addTransformer(transformer: Transformer): void {
+    this.transformers.push(transformer);
+  }
+
+  /**
+   * Update the writer for the pipeline
+   * @param writer The new writer to use
+   */
+  updateWriter(writer: Writer): void {
+    this.writer = writer;
+  }
+
+  /**
+   * Update the reader for the pipeline
+   * @param reader The new reader to use
+   */
+  updateReader(reader: Reader): void {
+    this.reader = reader;
+  }
+
+  /**
    * Run the pipeline
    */
   async run(): Promise<void> {
