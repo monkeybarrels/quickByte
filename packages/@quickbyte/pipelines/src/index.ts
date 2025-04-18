@@ -19,7 +19,7 @@ export * from './factory';
 export * from './pipelines/config-pipeline';
 
 // Export json pipeline
-export * from './pipelines/json-pipeline';
+export { createPipeline as createJsonPipeline } from './pipelines/json-pipeline';
 
 // Register default components
 import { registerDefaultComponents } from './factory';

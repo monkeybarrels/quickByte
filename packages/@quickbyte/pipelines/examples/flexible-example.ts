@@ -1,4 +1,4 @@
-import { FlexiblePipeline, defaultRegistry } from '../src';
+import { FlexiblePipeline, registry } from '../src';
 
 /**
  * Example demonstrating how to use the flexible pipeline
@@ -8,7 +8,7 @@ async function runFlexibleExample(): Promise<void> {
     // Create a pipeline configuration
     const config = {
       // Create a reader from the registry
-      reader: defaultRegistry.createReader({
+      reader: registry.createReader({
         type: 'API',
         location: 'http://localhost:1337/api/articles',
         options: {
@@ -22,7 +22,7 @@ async function runFlexibleExample(): Promise<void> {
       
       // Create transformers from the registry
       transformers: [
-        defaultRegistry.createTransformer({
+        registry.createTransformer({
           type: 'MAP',
           operations: [
             {
@@ -31,7 +31,7 @@ async function runFlexibleExample(): Promise<void> {
             }
           ]
         }),
-        defaultRegistry.createTransformer({
+        registry.createTransformer({
           type: 'FIELD_MAPPING',
           fieldMap: {
             'id': 'id',
@@ -40,7 +40,7 @@ async function runFlexibleExample(): Promise<void> {
             'publishedAt': 'publishedAt'
           }
         }),
-        defaultRegistry.createTransformer({
+        registry.createTransformer({
           type: 'ADD_FIELD',
           field: 'processedAt',
           value: '2024-03-14T12:00:00Z'
@@ -48,7 +48,7 @@ async function runFlexibleExample(): Promise<void> {
       ],
       
       // Create a writer from the registry
-      writer: defaultRegistry.createWriter({
+      writer: registry.createWriter({
         type: 'CSV',
         location: 'examples/configs/output/flexible-api-data.csv',
         options: {

@@ -39,7 +39,7 @@ describe('Types', () => {
         name: string;
       }
 
-      const reader: Reader<TestData[]> = {
+      const reader: Reader<TestData> = {
         read: jest.fn().mockResolvedValue([{ id: 1, name: 'test' }])
       };
 
@@ -71,16 +71,17 @@ describe('Types', () => {
         fullName: string;
       }
 
-      const transformer: Transformer<Input[], Output[]> = {
+      const transformer: Transformer<Input, Output> = {
         transform: jest.fn().mockResolvedValue([
           { userId: '1', fullName: 'Test User' }
         ])
       };
 
-      const result = await transformer.transform([
+      const input: Input[] = [
         { id: 1, name: 'Test' }
-      ]);
+      ];
 
+      const result = await transformer.transform(input);
       expect(result[0].userId).toBe('1');
       expect(result[0].fullName).toBe('Test User');
     });
@@ -123,11 +124,11 @@ describe('Types', () => {
         value: string;
       }
 
-      const writer: Writer<TestData[]> = {
+      const writer: Writer<TestData> = {
         write: jest.fn().mockResolvedValue(undefined)
       };
 
-      const testData = [{ id: 1, value: 'test' }];
+      const testData: TestData[] = [{ id: 1, value: 'test' }];
       await writer.write(testData);
       expect(writer.write).toHaveBeenCalledWith(testData);
     });

@@ -4,17 +4,58 @@ import { writeFileSync, mkdirSync, existsSync } from 'fs';
 import { dirname } from 'path';
 
 /**
- * CSV Writer - Writes data to a CSV file
+ * Configuration options for the CsvWriter
+ * @interface CsvWriterConfig
+ * @property {string} location - The file path where the CSV will be written
+ * @property {Record<string, any>} options - Additional options for CSV formatting
+ * @property {string[]} [options.columns] - Optional array of column names to include in the CSV
+ * @property {boolean} [options.headers] - Whether to include headers in the CSV (default: true)
+ */
+interface CsvWriterConfig {
+  location: string;
+  options: {
+    columns?: string[];
+    headers?: boolean;
+    [key: string]: any;
+  };
+}
+
+/**
+ * CsvWriter is an implementation of the Writer interface that writes data to a CSV file.
+ * This writer handles the file path and options configuration for CSV file writing.
+ * It automatically creates the output directory if it doesn't exist and formats the data
+ * according to the specified options.
+ * 
+ * @implements {Writer}
+ * @example
+ * const writer = new CsvWriter({ 
+ *   location: 'output.csv', 
+ *   options: { 
+ *     columns: ['id', 'name'],
+ *     headers: true 
+ *   } 
+ * });
+ * await writer.write([{ id: 1, name: 'test' }]);
  */
 export class CsvWriter implements Writer {
   private filePath: string;
   private options: Record<string, any>;
 
-  constructor(config: any) {
+  /**
+   * Creates a new CsvWriter instance
+   * @param {CsvWriterConfig} config - Configuration for the CSV writer
+   */
+  constructor(config: CsvWriterConfig) {
     this.filePath = config.location || '';
     this.options = config.options || {};
   }
 
+  /**
+   * Writes the provided data to a CSV file
+   * @param {any[]} data - Array of objects to be written to the CSV file
+   * @throws {Error} If the file path is not provided
+   * @returns {Promise<void>}
+   */
   async write(data: any[]): Promise<void> {
     if (!this.filePath) {
       throw new Error('CSV file path is required');

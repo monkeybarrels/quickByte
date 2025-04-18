@@ -22,8 +22,8 @@ export class MemoryWriter<T = any> implements Writer<T> {
     this.data = null;
   }
 
-  async write(data: T): Promise<void> {
-    this.data = data;
+  async write(data: T[]): Promise<void> {
+    this.data = data[0];
   }
 }
 
@@ -38,7 +38,7 @@ export class StreamWriter<T = any> implements Writer<T> {
     this.stream = stream;
   }
 
-  async write(data: T): Promise<void> {
+  async write(data: T[]): Promise<void> {
     return new Promise((resolve, reject) => {
       const stringData = JSON.stringify(data);
       this.stream.write(stringData, (error) => {

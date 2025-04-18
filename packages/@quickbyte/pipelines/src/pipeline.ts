@@ -1,16 +1,23 @@
 import { FlexiblePipelineConfig, Reader, Transformer, Writer } from './types';
 
 /**
- * FlexiblePipeline - A more flexible implementation of the data pipeline
- * that allows for more loosely coupled components and easier composition.
+ * A flexible data pipeline that orchestrates the flow of data through a series of components.
+ * The pipeline consists of a reader, optional transformers, and a writer.
+ * 
+ * @class FlexiblePipeline
+ * @template T - The type of data flowing through the pipeline
  */
-export class FlexiblePipeline {
-  private config: FlexiblePipelineConfig;
-  private reader: Reader;
-  private writer: Writer;
-  private transformers: Transformer[] = [];
+export class FlexiblePipeline<T = any> {
+  private config: FlexiblePipelineConfig<T>;
+  private reader: Reader<T>;
+  private writer: Writer<T>;
+  private transformers: Transformer<T>[] = [];
 
-  constructor(config: FlexiblePipelineConfig) {
+  /**
+   * Creates a new FlexiblePipeline instance
+   * @param {FlexiblePipelineConfig<T>} config - The pipeline configuration
+   */
+  constructor(config: FlexiblePipelineConfig<T>) {
     this.config = config;
     this.reader = config.reader;
     this.writer = config.writer;
@@ -21,31 +28,39 @@ export class FlexiblePipeline {
   }
 
   /**
-   * Add a transformer to the pipeline
-   * @param transformer The transformer to add
+   * Adds a transformer to the pipeline
+   * @param {Transformer<T>} transformer - The transformer to add
    */
-  addTransformer(transformer: Transformer): void {
+  addTransformer(transformer: Transformer<T>): void {
     this.transformers.push(transformer);
   }
 
   /**
-   * Update the writer for the pipeline
-   * @param writer The new writer to use
+   * Updates the writer component of the pipeline
+   * @param {Writer<T>} writer - The new writer to use
    */
-  updateWriter(writer: Writer): void {
+  updateWriter(writer: Writer<T>): void {
     this.writer = writer;
   }
 
   /**
-   * Update the reader for the pipeline
-   * @param reader The new reader to use
+   * Updates the reader component of the pipeline
+   * @param {Reader<T>} reader - The new reader to use
    */
-  updateReader(reader: Reader): void {
+  updateReader(reader: Reader<T>): void {
     this.reader = reader;
   }
 
   /**
-   * Run the pipeline
+   * Executes the pipeline by:
+   * 1. Connecting to the reader and writer (if they support it)
+   * 2. Reading data from the source
+   * 3. Applying each transformer in sequence
+   * 4. Writing the transformed data
+   * 5. Disconnecting from the reader and writer (if they support it)
+   * 
+   * @returns {Promise<void>} A promise that resolves when the pipeline execution is complete
+   * @throws {Error} If any step of the pipeline fails
    */
   async run(): Promise<void> {
     try {

@@ -1,36 +1,52 @@
 import { ComponentRegistry, ReaderFactory, TransformerFactory, WriterFactory } from './types';
 
 /**
- * ComponentRegistry - A registry for reader, transformer, and writer factories
+ * A registry for managing component factories (readers, transformers, and writers).
+ * This class provides methods to register and create components from configuration.
+ * 
+ * @class Registry
+ * @implements {ComponentRegistry}
  */
 export class Registry implements ComponentRegistry {
+  /** Map of registered reader factories */
   readers: Record<string, ReaderFactory> = {};
+  /** Map of registered transformer factories */
   transformers: Record<string, TransformerFactory> = {};
+  /** Map of registered writer factories */
   writers: Record<string, WriterFactory> = {};
 
   /**
-   * Register a reader factory
+   * Registers a reader factory with the registry
+   * @param {string} type - The type identifier for the reader
+   * @param {ReaderFactory} factory - The factory function that creates the reader
    */
   registerReader(type: string, factory: ReaderFactory): void {
     this.readers[type] = factory;
   }
 
   /**
-   * Register a transformer factory
+   * Registers a transformer factory with the registry
+   * @param {string} type - The type identifier for the transformer
+   * @param {TransformerFactory} factory - The factory function that creates the transformer
    */
   registerTransformer(type: string, factory: TransformerFactory): void {
     this.transformers[type] = factory;
   }
 
   /**
-   * Register a writer factory
+   * Registers a writer factory with the registry
+   * @param {string} type - The type identifier for the writer
+   * @param {WriterFactory} factory - The factory function that creates the writer
    */
   registerWriter(type: string, factory: WriterFactory): void {
     this.writers[type] = factory;
   }
 
   /**
-   * Create a reader from a configuration
+   * Creates a reader instance from a configuration
+   * @param {any} config - The configuration for the reader
+   * @returns {Reader} The created reader instance
+   * @throws {Error} If the reader type is not registered
    */
   createReader(config: any) {
     const type = config.type;
@@ -41,7 +57,10 @@ export class Registry implements ComponentRegistry {
   }
 
   /**
-   * Create a transformer from a configuration
+   * Creates a transformer instance from a configuration
+   * @param {any} config - The configuration for the transformer
+   * @returns {Transformer} The created transformer instance
+   * @throws {Error} If the transformer type is not registered
    */
   createTransformer(config: any) {
     const type = config.type;
@@ -52,7 +71,10 @@ export class Registry implements ComponentRegistry {
   }
 
   /**
-   * Create a writer from a configuration
+   * Creates a writer instance from a configuration
+   * @param {any} config - The configuration for the writer
+   * @returns {Writer} The created writer instance
+   * @throws {Error} If the writer type is not registered
    */
   createWriter(config: any) {
     const type = config.type;
@@ -63,5 +85,7 @@ export class Registry implements ComponentRegistry {
   }
 }
 
-// Create a default registry instance
+/**
+ * The default registry instance that can be used throughout the application
+ */
 export const defaultRegistry = new Registry(); 

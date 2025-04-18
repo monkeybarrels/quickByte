@@ -1,4 +1,4 @@
-import { FlexiblePipeline, defaultRegistry, Reader, Transformer, Writer } from '../src';
+import { FlexiblePipeline, registry, Reader, Transformer, Writer } from '../src';
 
 /**
  * Advanced example demonstrating the flexibility of the new pipeline approach
@@ -30,7 +30,7 @@ async function runFlexibleAdvancedExample(): Promise<void> {
 async function runRegistryExample(): Promise<void> {
   // Create a pipeline using the registry
   const config = {
-    reader: defaultRegistry.createReader({
+    reader: registry.createReader({
       type: 'API',
       location: 'http://localhost:1337/api/articles',
       options: {
@@ -42,7 +42,7 @@ async function runRegistryExample(): Promise<void> {
       }
     }),
     transformers: [
-      defaultRegistry.createTransformer({
+      registry.createTransformer({
         type: 'FIELD_MAPPING',
         fieldMap: {
           'id': 'id',
@@ -51,13 +51,13 @@ async function runRegistryExample(): Promise<void> {
           'publishedAt': 'publishedAt'
         }
       }),
-      defaultRegistry.createTransformer({
+      registry.createTransformer({
         type: 'ADD_FIELD',
         field: 'processedAt',
         value: '2024-03-14T12:00:00Z'
       })
     ],
-    writer: defaultRegistry.createWriter({
+    writer: registry.createWriter({
       type: 'CSV',
       location: 'examples/configs/output/registry-example.csv',
       options: {
@@ -123,7 +123,7 @@ async function runCustomComponentsExample(): Promise<void> {
  */
 async function runComposedPipelinesExample(): Promise<void> {
   // Create a reader that reads from an API
-  const apiReader = defaultRegistry.createReader({
+  const apiReader = registry.createReader({
     type: 'API',
     location: 'http://localhost:1337/api/articles',
     options: {
@@ -136,7 +136,7 @@ async function runComposedPipelinesExample(): Promise<void> {
   });
   
   // Create a transformer that extracts specific fields
-  const fieldExtractor = defaultRegistry.createTransformer({
+  const fieldExtractor = registry.createTransformer({
     type: 'FIELD_MAPPING',
     fieldMap: {
       'id': 'id',
@@ -147,14 +147,14 @@ async function runComposedPipelinesExample(): Promise<void> {
   });
   
   // Create a transformer that adds a timestamp
-  const timestampAdder = defaultRegistry.createTransformer({
+  const timestampAdder = registry.createTransformer({
     type: 'ADD_FIELD',
     field: 'processedAt',
     value: '2024-03-14T12:00:00Z'
   });
   
   // Create a transformer that filters items
-  const filter = defaultRegistry.createTransformer({
+  const filter = registry.createTransformer({
     type: 'FILTER',
     condition: {
       field: 'id',
@@ -164,7 +164,7 @@ async function runComposedPipelinesExample(): Promise<void> {
   });
   
   // Create a writer that writes to CSV
-  const csvWriter = defaultRegistry.createWriter({
+  const csvWriter = registry.createWriter({
     type: 'CSV',
     location: 'examples/configs/output/composed-example.csv',
     options: {
@@ -175,7 +175,7 @@ async function runComposedPipelinesExample(): Promise<void> {
   });
   
   // Create a writer that writes to memory (for demonstration)
-  const memoryWriter = defaultRegistry.createWriter({
+  const memoryWriter = registry.createWriter({
     type: 'MEMORY'
   });
   

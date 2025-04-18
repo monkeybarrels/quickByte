@@ -48,6 +48,10 @@ export class FileReader implements Reader {
   private config: FileReaderConfig;
   private fileHandle?: fs.FileHandle;
 
+  /**
+   * Creates a new FileReader instance
+   * @param config - Configuration for the file reader
+   */
   constructor(config: FileReaderConfig) {
     this.config = {
       encoding: 'utf-8',
@@ -56,10 +60,20 @@ export class FileReader implements Reader {
     };
   }
 
+  /**
+   * Connects to the file system
+   * @remarks This method is a no-op for file reading as no connection is needed
+   * @returns Promise that resolves when connection is complete
+   */
   async connect(): Promise<void> {
     // No need to connect for file reading
   }
 
+  /**
+   * Reads the contents of the configured file
+   * @returns Promise that resolves with the file contents
+   * @throws Error if file cannot be read or JSON parsing fails
+   */
   async read(): Promise<any> {
     try {
       const filePath = path.resolve(this.config.path);
@@ -76,6 +90,11 @@ export class FileReader implements Reader {
     }
   }
 
+  /**
+   * Disconnects from the file system
+   * @remarks This method is a no-op for file reading as no disconnection is needed
+   * @returns Promise that resolves when disconnection is complete
+   */
   async disconnect(): Promise<void> {
     // No need to disconnect for file reading
   }
