@@ -4,4 +4,4 @@ import { MongoReader } from './MongoReader';
 import { MemoryReader } from './MemoryReader';
 import { Reader } from '../types';
 
-export { ApiReader, CsvReader, MongoReader, MemoryReader }; 
+export { ApiReader, CsvReader, MongoReader, MemoryReader, Reader }; 

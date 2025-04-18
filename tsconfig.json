@@ -9,7 +9,6 @@
     "composite": true
   },
   "references": [
-    { "path": "packages/@quickbyte/core" },
     { "path": "packages/@quickbyte/pipelines" }
   ],
   "files": []
