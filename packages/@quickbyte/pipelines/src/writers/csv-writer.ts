@@ -1,24 +1,7 @@
-import { Writer } from '../types';
+import { Writer, CsvWriterConfig } from '../types';
 import { stringify as csvStringify } from 'csv-stringify/sync';
 import { writeFileSync, mkdirSync, existsSync } from 'fs';
 import { dirname } from 'path';
-
-/**
- * Configuration options for the CsvWriter
- * @interface CsvWriterConfig
- * @property {string} location - The file path where the CSV will be written
- * @property {Record<string, any>} options - Additional options for CSV formatting
- * @property {string[]} [options.columns] - Optional array of column names to include in the CSV
- * @property {boolean} [options.headers] - Whether to include headers in the CSV (default: true)
- */
-interface CsvWriterConfig {
-  location: string;
-  options: {
-    columns?: string[];
-    headers?: boolean;
-    [key: string]: any;
-  };
-}
 
 /**
  * CsvWriter is an implementation of the Writer interface that writes data to a CSV file.

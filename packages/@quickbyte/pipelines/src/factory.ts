@@ -1,7 +1,9 @@
 import { defaultRegistry } from './registry';
-import { MemoryWriter } from './writers';
+import { MemoryWriter, CsvWriter, MongoWriter, ApiWriter } from './writers';
 import { WriterFactory, TransformerFactory, PipelineConfig } from './types';
 import { FlexiblePipeline } from './pipeline';
+import { CsvReader, ApiReader, FileReader, MemoryReader, MongoReader, FileReaderConfig } from './readers';
+import { EnrichTransformer, MapTransformer, FilterTransformer, FieldMappingTransformer, AddFieldTransformer } from './transformers';
 
 /**
  * Registers all default components with the default registry.
@@ -16,6 +18,40 @@ import { FlexiblePipeline } from './pipeline';
 export function registerDefaultComponents(): void {
   // Register default writers
   defaultRegistry.registerWriter('MEMORY', (config) => new MemoryWriter());
+
+  // Default Readers
+  defaultRegistry.registerReader('CSV', (config) => new CsvReader(config));
+  defaultRegistry.registerReader('API', (config) => new ApiReader(config));
+  defaultRegistry.registerReader('FILE', (config) => new FileReader({
+    path: config.location,
+    encoding: config.options?.encoding as BufferEncoding,
+    parseJson: config.options?.parseJson as boolean
+  }));
+  defaultRegistry.registerReader('MEMORY', (config) => new MemoryReader(config));
+  defaultRegistry.registerReader('MONGO', (config) => new MongoReader(config));
+
+  // Default Writers
+  defaultRegistry.registerWriter('MEMORY', (config) => new MemoryWriter());
+  defaultRegistry.registerWriter('CSV', (config) => new CsvWriter({
+    ...config,
+    options: config.options || {}
+  }));
+  defaultRegistry.registerWriter('MONGO', (config) => new MongoWriter(config));
+  defaultRegistry.registerWriter('API', (config) => new ApiWriter(config));
+
+  // Default Transformers
+  defaultRegistry.registerTransformer('ENRICH', (config) => EnrichTransformer({
+    type: 'http' as const,
+    urlTemplate: config.urlTemplate || '',
+    headers: config.headers,
+    merge: config.merge,
+    onError: config.onError,
+    fallback: config.fallback
+  }));
+  defaultRegistry.registerTransformer('MAP', (config) => new MapTransformer(config));
+  defaultRegistry.registerTransformer('FILTER', (config) => new FilterTransformer(config));
+  defaultRegistry.registerTransformer('FIELD_MAPPING', (config) => new FieldMappingTransformer(config));
+  defaultRegistry.registerTransformer('ADD_FIELD', (config) => new AddFieldTransformer(config));
 }
 
 export function registerWriter(type: string, factory: WriterFactory): void {
@@ -57,4 +93,4 @@ export const createPipeline = async (config: PipelineConfig): Promise<FlexiblePi
     transformers,
     writer
   });
-}; 
+};

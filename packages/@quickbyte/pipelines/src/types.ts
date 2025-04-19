@@ -101,6 +101,15 @@ export interface WriterConfig {
   options?: Record<string, any>;
 }
 
+export interface CsvWriterConfig {
+  location: string;
+  options: {
+    columns?: string[];
+    headers?: boolean;
+    [key: string]: any;
+  };
+}
+
 /**
  * Configuration for creating a pipeline from a registry
  * @interface PipelineConfig

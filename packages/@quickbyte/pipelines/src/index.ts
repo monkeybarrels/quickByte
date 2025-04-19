@@ -1,5 +1,5 @@
 import { ReaderFactory, TransformerFactory, WriterFactory } from './types';
-import { defaultRegistry as registry } from './registry';
+import { defaultRegistry } from './registry';
 
 // Export pipeline
 export * from './pipeline';
@@ -21,11 +21,12 @@ export * from './pipelines/config-pipeline';
 // Export json pipeline
 export { createPipeline as createJsonPipeline } from './pipelines/json-pipeline';
 
+// Export registry
+export { defaultRegistry } from './registry';
+
 // Register default components
 import { registerDefaultComponents } from './factory';
 registerDefaultComponents();
-
-export { defaultRegistry as registry } from './registry';
 
 /**
  * Register a custom reader factory
@@ -44,7 +45,7 @@ export { defaultRegistry as registry } from './registry';
  * ```
  */
 export function registerReader(type: string, factory: ReaderFactory): void {
-  registry.registerReader(type, factory);
+  defaultRegistry.registerReader(type, factory);
 }
 
 /**
@@ -64,7 +65,7 @@ export function registerReader(type: string, factory: ReaderFactory): void {
  * ```
  */
 export function registerTransformer(type: string, factory: TransformerFactory): void {
-  registry.registerTransformer(type, factory);
+  defaultRegistry.registerTransformer(type, factory);
 }
 
 /**
@@ -84,5 +85,5 @@ export function registerTransformer(type: string, factory: TransformerFactory): 
  * ```
  */
 export function registerWriter(type: string, factory: WriterFactory): void {
-  registry.registerWriter(type, factory);
+  defaultRegistry.registerWriter(type, factory);
 } 

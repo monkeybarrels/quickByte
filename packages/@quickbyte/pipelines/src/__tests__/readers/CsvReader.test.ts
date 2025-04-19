@@ -14,7 +14,7 @@ describe('CsvReader', () => {
   ];
 
   beforeEach(() => {
-    (readFileSync as jest.Mock).mockReturnValue(mockCsvContent);
+    (readFileSync as jest.Mock).mockImplementation(() => mockCsvContent);
     (csvParse as jest.Mock).mockReturnValue(mockParsedData);
   });
 
