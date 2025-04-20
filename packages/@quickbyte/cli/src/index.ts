@@ -1,5 +1,12 @@
 import { Command } from 'commander';
-import { addDefineCommand, addRunCommand, addValidateCommand, addListCommand, addScaffoldCommand } from './commands';
+import {
+  addDefineCommand,
+  addRunCommand,
+  addValidateCommand,
+  addListCommand,
+  addScaffoldCommand,
+  addScaffoldComponentCommand
+} from './commands';
 
 
 const program = new Command();
@@ -9,5 +16,6 @@ addRunCommand(program);
 addValidateCommand(program);
 addListCommand(program);
 addScaffoldCommand(program);
+addScaffoldComponentCommand(program);
 
 program.parse(); 

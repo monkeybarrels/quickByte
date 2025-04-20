@@ -165,3 +165,5 @@ dist
 
 
 output/
+
+packages/@quickbyte/cli/packages

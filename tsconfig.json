@@ -7,7 +7,12 @@
     "strict": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "composite": true
+    "composite": true,
+    "baseUrl": ".",
+    "paths": {
+      "@quickbyte/pipelines": ["./packages/@quickbyte/pipelines/src"],
+      "@quickbyte/cli": ["./packages/@quickbyte/cli/src"]
+    }
   },
   "references": [
     { "path": "packages/@quickbyte/pipelines" },

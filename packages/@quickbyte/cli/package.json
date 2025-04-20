@@ -7,6 +7,7 @@
     "qb": "dist/index.js"
   },
   "scripts": {
+    "dev": "ts-node src/index.ts",
     "build": "tsc --build",
     "clean": "rm -rf dist"
   },
