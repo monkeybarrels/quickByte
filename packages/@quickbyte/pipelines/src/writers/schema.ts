@@ -22,6 +22,11 @@ export const MongoWriterSchema = z.object({
   collection: z.string()
 });
 
+export const PipelineOutputWriterSchema = z.object({
+  pipelineId: z.string(),
+  outputPath: z.string().optional()
+});
+
 export const WriterSchemas = {
   MEMORY: MemoryWriterSchema,
   FILE: FileWriterSchema,

@@ -27,13 +27,15 @@ export const ApiReaderSchema = z.object({
   headers: z.record(z.string()).optional()
 });
 
-
 export const FileReaderSchema = z.object({
   path: z.string(),
   format: z.enum(['json', 'csv']).optional()
 });
 
-
+export const PipelineOutputReaderSchema = z.object({
+  pipelineId: z.string(),
+  outputPath: z.string().optional()
+});
 
 export const ReaderSchemas = {
   CSV: CSVReaderSchema,
@@ -41,7 +43,8 @@ export const ReaderSchemas = {
   MONGO: MongoReaderSchema,
   MEMORY: MemoryReaderSchema,
   API: ApiReaderSchema,
-  FILE: FileReaderSchema
+  FILE: FileReaderSchema,
+  PIPELINE_OUTPUT: PipelineOutputReaderSchema
 };
 
 
