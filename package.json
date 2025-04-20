@@ -20,7 +20,18 @@
     "version:pipelines:premajor": "pnpm --filter @quickbyte/pipelines version:premajor",
     "release:pipelines:patch": "pnpm version:pipelines:patch && pnpm publish:pipelines",
     "release:pipelines:minor": "pnpm version:pipelines:minor && pnpm publish:pipelines",
-    "release:pipelines:major": "pnpm version:pipelines:major && pnpm publish:pipelines"
+    "release:pipelines:major": "pnpm version:pipelines:major && pnpm publish:pipelines",
+    "publish:cli": "pnpm --filter @quickbyte/cli publish",
+    "version:cli:patch": "pnpm --filter @quickbyte/cli version:patch",
+    "version:cli:minor": "pnpm --filter @quickbyte/cli version:minor",
+    "version:cli:major": "pnpm --filter @quickbyte/cli version:major",
+    "version:cli:pre": "pnpm --filter @quickbyte/cli version:pre",
+    "version:cli:prepatch": "pnpm --filter @quickbyte/cli version:prepatch",
+    "version:cli:preminor": "pnpm --filter @quickbyte/cli version:preminor",
+    "version:cli:premajor": "pnpm --filter @quickbyte/cli version:premajor",
+    "release:cli:patch": "pnpm version:cli:patch && pnpm publish:cli",
+    "release:cli:minor": "pnpm version:cli:minor && pnpm publish:cli",
+    "release:cli:major": "pnpm version:cli:major && pnpm publish:cli"
   },
   "devDependencies": {
     "@jest/globals": "^29.7.0",
