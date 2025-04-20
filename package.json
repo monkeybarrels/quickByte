@@ -11,7 +11,8 @@
     "lint": "yarn workspaces run lint",
     "clean": "yarn workspaces run clean",
     "dev": "ts-node server.ts",
-    "start": "node dist/server.js"
+    "start": "node dist/server.js",
+    "qb": "yarn workspace @quickbyte/cli dev --"
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",

@@ -9,8 +9,13 @@ import {
   addScaffoldComponentCommand
 } from './commands';
 
-
 const program = new Command();
+
+// Add version support
+program
+  .name('qb')
+  .version('0.1.1')
+  .description('QuickByte CLI tool for data transformation and pipeline management');
 
 addDefineCommand(program);
 addRunCommand(program);
