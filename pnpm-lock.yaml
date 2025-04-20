@@ -14,6 +14,9 @@ importers:
       p-map:
         specifier: ^7.0.3
         version: 7.0.3
+      zod:
+        specifier: ^3.22.4
+        version: 3.24.3
     devDependencies:
       '@jest/globals':
         specifier: ^29.7.0
@@ -60,6 +63,9 @@ importers:
       winston:
         specifier: ^3.11.0
         version: 3.17.0
+      zod:
+        specifier: ^3.22.4
+        version: 3.24.3
     devDependencies:
       '@types/node':
         specifier: ^20.11.19
@@ -91,7 +97,7 @@ importers:
         version: 29.7.0
       '@types/bun':
         specifier: latest
-        version: 1.2.9
+        version: 1.2.10
       '@types/jest':
         specifier: ^29.5.12
         version: 29.5.14
@@ -475,8 +481,8 @@ packages:
   '@types/babel__traverse@7.20.7':
     resolution: {integrity: sha512-dkO5fhS7+/oos4ciWxyEyjWe48zmG6wbCheo/G2ZnHx4fs3EU6YC6UM8rk56gAjNJ9P3MTH2jo5jb92/K6wbng==}
 
-  '@types/bun@1.2.9':
-    resolution: {integrity: sha512-epShhLGQYc4Bv/aceHbmBhOz1XgUnuTZgcxjxk+WXwNyDXavv5QHD1QEFV0FwbTSQtNq6g4ZcV6y0vZakTjswg==}
+  '@types/bun@1.2.10':
+    resolution: {integrity: sha512-eilv6WFM3M0c9ztJt7/g80BDusK98z/FrFwseZgT4bXCq2vPhXD4z8R3oddmAn+R/Nmz9vBn4kweJKmGTZj+lg==}
 
   '@types/graceful-fs@4.1.9':
     resolution: {integrity: sha512-olP3sd1qOEe5dXTSaFvQG+02VdRXcdytWLAZsAq1PecU8uqQAhkrnbli7DagjtXKW/Bl7YJbUsa8MPcuc8LHEQ==}
@@ -520,9 +526,6 @@ packages:
   '@types/winston@2.4.4':
     resolution: {integrity: sha512-BVGCztsypW8EYwJ+Hq+QNYiT/MUyCif0ouBH+flrY66O5W+KIXAMML6E/0fJpm7VjIzgangahl5S03bJJQGrZw==}
     deprecated: This is a stub types definition. winston provides its own type definitions, so you do not need this installed.
-
-  '@types/ws@8.18.1':
-    resolution: {integrity: sha512-ThVF6DCVhA8kUGy+aazFQ4kXQ7E1Ty7A3ypFOe0IcJV8O/M511G99AW24irKrW56Wt44yG9+ij8FaqoBGkuBXg==}
 
   '@types/yargs-parser@21.0.3':
     resolution: {integrity: sha512-I4q9QU9MQv4oEOz4tAHJtNz1cwuLxn2F3xcc2iV5WdqLPpUnj30aUuxt1mAxYTG+oe8CZMV/+6rU4S4gRDzqtQ==}
@@ -716,8 +719,8 @@ packages:
   buffer-from@1.1.2:
     resolution: {integrity: sha512-E+XQCRwSbaaiChtv6k6Dwgc+bx+Bs6vuKJHHl5kox/BaKbhiXzqQOwK4cO22yElGp2OCmjwVhT3HmxgyPGnJfQ==}
 
-  bun-types@1.2.9:
-    resolution: {integrity: sha512-dk/kOEfQbajENN/D6FyiSgOKEuUi9PWfqKQJEgwKrCMWbjS/S6tEXp178mWvWAcUSYm9ArDlWHZKO3T/4cLXiw==}
+  bun-types@1.2.10:
+    resolution: {integrity: sha512-b5ITZMnVdf3m1gMvJHG+gIfeJHiQPJak0f7925Hxu6ZN5VKA8AGy4GZ4lM+Xkn6jtWxg5S3ldWvfmXdvnkp3GQ==}
 
   call-bind-apply-helpers@1.0.2:
     resolution: {integrity: sha512-Sp1ablJ0ivDkSzjcaJdxEunN5/XvksFJ2sMBFfq6x0ryhQV/2b/KwFe21cMpmHtPOSij8K99/wSfoEuTObmuMQ==}
@@ -2044,6 +2047,9 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
 
+  zod@3.24.3:
+    resolution: {integrity: sha512-HhY1oqzWCQWuUqvBFnsyrtZRhyPeR7SUGv+C4+MsisMuVfSPx8HpwWqH8tRahSlt6M3PiFAcoeFhZAqIXTxoSg==}
+
 snapshots:
 
   '@ampproject/remapping@2.3.0':
@@ -2534,9 +2540,9 @@ snapshots:
     dependencies:
       '@babel/types': 7.27.0
 
-  '@types/bun@1.2.9':
+  '@types/bun@1.2.10':
     dependencies:
-      bun-types: 1.2.9
+      bun-types: 1.2.10
 
   '@types/graceful-fs@4.1.9':
     dependencies:
@@ -2584,10 +2590,6 @@ snapshots:
   '@types/winston@2.4.4':
     dependencies:
       winston: 3.17.0
-
-  '@types/ws@8.18.1':
-    dependencies:
-      '@types/node': 20.17.30
 
   '@types/yargs-parser@21.0.3': {}
 
@@ -2836,10 +2838,9 @@ snapshots:
 
   buffer-from@1.1.2: {}
 
-  bun-types@1.2.9:
+  bun-types@1.2.10:
     dependencies:
       '@types/node': 20.17.30
-      '@types/ws': 8.18.1
 
   call-bind-apply-helpers@1.0.2:
     dependencies:
@@ -4244,3 +4245,5 @@ snapshots:
   yn@3.1.1: {}
 
   yocto-queue@0.1.0: {}
+
+  zod@3.24.3: {}

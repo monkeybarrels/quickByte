@@ -2,7 +2,30 @@ import { Command } from 'commander';
 import { readFileSync } from 'fs';
 import { createLogger, format, transports } from 'winston';
 import path from 'path';
-import { createJsonPipeline, defaultRegistry } from '@quickbyte/pipelines';
+import { createJsonPipeline, defaultRegistry, ReaderSchemas, WriterSchemas, TransformerSchemas } from '@quickbyte/pipelines';
+import * as fs from 'fs';
+
+
+function validatePipelineConfig(config: any): void {
+  const { reader, writer, transformers = [] } = config;
+
+  // Reader
+  const readerSchema = ReaderSchemas[reader?.type as keyof typeof ReaderSchemas];
+  if (!readerSchema) throw new Error(`Unknown reader type: ${reader?.type}`);
+  readerSchema.parse(reader.config ?? {});
+
+  // Writer
+  const writerSchema = WriterSchemas[writer?.type as keyof typeof WriterSchemas];
+  if (!writerSchema) throw new Error(`Unknown writer type: ${writer?.type}`);
+  writerSchema.parse(writer.config ?? {});
+
+  // Transformers
+  for (const transformer of transformers) {
+    const transformerSchema = TransformerSchemas[transformer?.type as keyof typeof TransformerSchemas];
+    if (!transformerSchema) throw new Error(`Unknown transformer type: ${transformer?.type}`);
+    transformerSchema.parse(transformer.config ?? {});
+  }
+}
 
 const logger = createLogger({
   level: 'info',
@@ -55,10 +78,12 @@ program
   .argument('<configPath>', 'Path to the pipeline config file')
   .action((configPath) => {
     try {
-      const config = JSON.parse(readFileSync(path.resolve(configPath), 'utf-8'));
-      console.log('✅ Config is valid:', config);
+      const config = JSON.parse(fs.readFileSync(path.resolve(configPath), 'utf-8'));
+      validatePipelineConfig(config);
+      console.log('✅ Config is valid!');
     } catch (err) {
-      console.error('❌ Invalid config:', err instanceof Error ? err.message : String(err));
+      console.error('❌ Config validation failed:');
+      console.error(err instanceof Error ? err.message : err);
       process.exit(1);
     }
   });
@@ -70,6 +95,6 @@ program
     console.log('📥 Readers:', Object.keys(defaultRegistry.readers));
     console.log('🔄 Transformers:', Object.keys(defaultRegistry.transformers));
     console.log('📤 Writers:', Object.keys(defaultRegistry.writers));
-  }); 
+  });
 
 program.parse(); 

@@ -1,5 +1,8 @@
 import { ReaderFactory, TransformerFactory, WriterFactory } from './types';
 import { defaultRegistry } from './registry';
+import { ReaderSchemas } from './readers/schema';
+import { WriterSchemas } from './writers/schema';
+import { TransformerSchemas } from './transformers/schema';
 
 // Export pipeline
 export * from './pipeline';
@@ -23,6 +26,9 @@ export { createPipeline as createJsonPipeline } from './pipelines/json-pipeline'
 
 // Export registry
 export { defaultRegistry } from './registry';
+
+// Export schemas
+export { ReaderSchemas, WriterSchemas, TransformerSchemas };
 
 // Register default components
 import { registerDefaultComponents } from './factory';

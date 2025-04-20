@@ -3,11 +3,15 @@ import { FilterTransformer } from './FilterTransformer';
 import { MapTransformer } from './MapTransformer';
 import { AddFieldTransformer } from './AddFieldTransformer';
 import { EnrichTransformer } from './EnrichTransformer';
+import { MapTransformerSchema, FilterTransformerSchema, EnrichTransformerSchema } from './schema';
 
 export {
   EnrichTransformer,
   FieldMappingTransformer,
   FilterTransformer,
   MapTransformer,
-  AddFieldTransformer
+  AddFieldTransformer,
+  MapTransformerSchema,
+  FilterTransformerSchema,
+  EnrichTransformerSchema
 }; 

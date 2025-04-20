@@ -13,7 +13,8 @@
   "dependencies": {
     "@quickbyte/pipelines": "workspace:*",
     "commander": "^11.1.0",
-    "winston": "^3.11.0"
+    "winston": "^3.11.0",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@types/node": "^20.11.19",

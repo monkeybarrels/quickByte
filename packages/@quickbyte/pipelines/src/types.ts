@@ -1,5 +1,10 @@
 // Flexible pipeline types
 
+// Import schema types
+import { CSVReaderSchema, JSONReaderSchema } from './readers/schema';
+import { MemoryWriterSchema, FileWriterSchema, ConsoleWriterSchema, APIWriterSchema, MongoWriterSchema } from './writers/schema';
+import { MapTransformerSchema, FilterTransformerSchema, EnrichTransformerSchema } from './transformers/schema';
+
 // Generic data type - can be anything
 export type Data = any;
 
@@ -139,4 +144,18 @@ export interface ComponentRegistry {
   transformers: Record<string, TransformerFactory>;
   /** Map of writer factories by type */
   writers: Record<string, WriterFactory>;
-} 
+}
+
+// Export schema types
+export {
+  CSVReaderSchema,
+  JSONReaderSchema,
+  MemoryWriterSchema,
+  FileWriterSchema,
+  ConsoleWriterSchema,
+  APIWriterSchema,
+  MongoWriterSchema,
+  MapTransformerSchema,
+  FilterTransformerSchema,
+  EnrichTransformerSchema
+}; 
