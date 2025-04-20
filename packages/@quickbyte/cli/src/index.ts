@@ -2,6 +2,7 @@ import { Command } from 'commander';
 import {
   addDefineCommand,
   addRunCommand,
+  addDryRunCommand,
   addValidateCommand,
   addListCommand,
   addScaffoldCommand,
@@ -13,6 +14,7 @@ const program = new Command();
 
 addDefineCommand(program);
 addRunCommand(program);
+addDryRunCommand(program);
 addValidateCommand(program);
 addListCommand(program);
 addScaffoldCommand(program);

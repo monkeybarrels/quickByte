@@ -4,3 +4,4 @@ export * from './list';
 export * from './scaffold';
 export * from './define';
 export * from './scaffoldComponent';
+export * from './dryRun';

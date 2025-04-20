@@ -67,12 +67,21 @@ importers:
         specifier: ^3.22.4
         version: 3.24.3
     devDependencies:
+      '@types/jest':
+        specifier: ^29.5.12
+        version: 29.5.14
       '@types/node':
         specifier: ^20.11.19
         version: 20.17.30
       '@types/winston':
         specifier: ^2.4.4
         version: 2.4.4
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@20.17.30)(ts-node@10.9.2(@types/node@20.17.30)(typescript@5.8.3))
+      ts-jest:
+        specifier: ^29.1.2
+        version: 29.3.1(@babel/core@7.26.10)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.26.10))(jest@29.7.0(@types/node@20.17.30)(ts-node@10.9.2(@types/node@20.17.30)(typescript@5.8.3)))(typescript@5.8.3)
       typescript:
         specifier: ^5.3.3
         version: 5.8.3
