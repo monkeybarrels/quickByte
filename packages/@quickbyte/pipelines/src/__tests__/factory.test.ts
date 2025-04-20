@@ -1,3 +1,4 @@
+import { describe, beforeEach, expect, it } from '@jest/globals';
 import { defaultRegistry } from '../registry';
 import { registerDefaultComponents, registerWriter, registerTransformer } from '../factory';
 import { MemoryWriter } from '../writers';

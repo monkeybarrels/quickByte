@@ -2,53 +2,30 @@
   "name": "quickbyte",
   "version": "1.0.1",
   "private": true,
+  "workspaces": [
+    "packages/@quickbyte/*"
+  ],
   "scripts": {
-    "build": "pnpm -r build",
-    "build:all": "pnpm --filter @quickbyte/pipelines build && pnpm --filter @quickbyte/cli build",
-    "test": "pnpm -r test",
-    "lint": "pnpm -r lint",
-    "clean": "pnpm -r clean",
-    "rebuild": "pnpm clean && pnpm build:all",
-    "qb": "node packages/@quickbyte/cli/dist/index.js",
-    "publish:pipelines": "pnpm --filter @quickbyte/pipelines publish",
-    "version:pipelines:patch": "pnpm --filter @quickbyte/pipelines version:patch",
-    "version:pipelines:minor": "pnpm --filter @quickbyte/pipelines version:minor",
-    "version:pipelines:major": "pnpm --filter @quickbyte/pipelines version:major",
-    "version:pipelines:pre": "pnpm --filter @quickbyte/pipelines version:pre",
-    "version:pipelines:prepatch": "pnpm --filter @quickbyte/pipelines version:prepatch",
-    "version:pipelines:preminor": "pnpm --filter @quickbyte/pipelines version:preminor",
-    "version:pipelines:premajor": "pnpm --filter @quickbyte/pipelines version:premajor",
-    "release:pipelines:patch": "pnpm version:pipelines:patch && pnpm publish:pipelines",
-    "release:pipelines:minor": "pnpm version:pipelines:minor && pnpm publish:pipelines",
-    "release:pipelines:major": "pnpm version:pipelines:major && pnpm publish:pipelines",
-    "publish:cli": "pnpm --filter @quickbyte/cli publish",
-    "version:cli:patch": "pnpm --filter @quickbyte/cli version:patch",
-    "version:cli:minor": "pnpm --filter @quickbyte/cli version:minor",
-    "version:cli:major": "pnpm --filter @quickbyte/cli version:major",
-    "version:cli:pre": "pnpm --filter @quickbyte/cli version:pre",
-    "version:cli:prepatch": "pnpm --filter @quickbyte/cli version:prepatch",
-    "version:cli:preminor": "pnpm --filter @quickbyte/cli version:preminor",
-    "version:cli:premajor": "pnpm --filter @quickbyte/cli version:premajor",
-    "release:cli:patch": "pnpm version:cli:patch && pnpm publish:cli",
-    "release:cli:minor": "pnpm version:cli:minor && pnpm publish:cli",
-    "release:cli:major": "pnpm version:cli:major && pnpm publish:cli"
+    "build": "yarn workspaces run build",
+    "test": "yarn workspaces run test",
+    "lint": "yarn workspaces run lint",
+    "clean": "yarn workspaces run clean",
+    "dev": "ts-node server.ts",
+    "start": "node dist/server.js"
   },
   "devDependencies": {
-    "@jest/globals": "^29.7.0",
-    "@types/node": "^20.17.28",
-    "@types/pg": "^8.10.9",
-    "@typescript-eslint/eslint-plugin": "^6.15.0",
-    "@typescript-eslint/parser": "^6.15.0",
-    "@xmldom/xmldom": "^0.9.0",
-    "dotenv": "^16.4.1",
-    "eslint": "^8.56.0",
-    "pg": "^8.11.3",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.3.3"
+    "@types/jest": "^29.5.12",
+    "@types/node": "^18.11.18",
+    "ts-jest": "^29.1.2",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.7.3"
   },
   "dependencies": {
-    "mongodb": "^6.15.0",
-    "p-map": "^7.0.3",
-    "zod": "^3.22.4"
+    "fastify": "^4.10.2",
+    "@fastify/swagger": "^8.3.1",
+    "@fastify/swagger-ui": "^1.8.1",
+    "@fastify/static": "^6.10.2",
+    "mongoose": "^7.0.0",
+    "dotenv": "^16.0.3"
   }
 }

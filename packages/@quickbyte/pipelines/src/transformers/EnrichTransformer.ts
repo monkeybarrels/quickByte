@@ -51,16 +51,19 @@ export const EnrichTransformer = (options: EnrichTransformerOptions): Transforme
   }
 
   return {
-    transform: async (data: Record<string, any>) => {
+    transform: async (data: Record<string, any>[]) => {
       try {
-        const url = interpolate(options.urlTemplate, data);
-        const res = await fetch(url, { headers: options.headers });
-        const enrichedData = await res.json();
+        const enrichedResults = await Promise.all(data.map(async (item) => {
+          const url = interpolate(options.urlTemplate, item);
+          const res = await fetch(url, { headers: options.headers });
+          const enrichedData = await res.json() as Record<string, any>;
+          return options.merge ? { ...item, ...enrichedData } : enrichedData;
+        }));
 
-        return options.merge ? { ...data, ...enrichedData } : enrichedData;
+        return enrichedResults;
       } catch (err) {
         if (options.onError === 'fallback') {
-          return { ...data, ...(options.fallback ?? {}) };
+          return data.map(item => ({ ...item, ...(options.fallback ?? {}) }));
         } else if (options.onError === 'skip') {
           return data;
         } else {

@@ -1,4 +1,0 @@
-packages:
-  - 'packages/*'
-  - 'packages/@quickbyte/pipelines' 
-  - 'packages/@quickbyte/cli'

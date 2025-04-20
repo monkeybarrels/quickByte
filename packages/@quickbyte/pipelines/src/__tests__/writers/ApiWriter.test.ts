@@ -42,7 +42,7 @@ describe('ApiWriter', () => {
     it('should handle API errors', async () => {
       mock.onPost(testUrl).reply(500, { error: 'Internal Server Error' });
 
-      await expect(writer.write(testData)).rejects.toThrow();
+      await expect(writer.write(testData)).rejects.toThrow('API request failed: Internal Server Error');
     });
 
     it('should handle empty data', async () => {

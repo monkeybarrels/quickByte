@@ -49,7 +49,9 @@ export class ApiWriter implements Writer {
         throw new Error(`Unsupported HTTP method: ${this.method}`);
       }
     } catch (error) {
-      console.error('Error writing data to API:', error);
+      if (axios.isAxiosError(error)) {
+        throw new Error(`API request failed: ${error.response?.data?.error || error.message}`);
+      }
       throw error;
     }
   }
