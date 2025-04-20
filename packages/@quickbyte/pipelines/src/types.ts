@@ -3,7 +3,7 @@
 // Import schema types
 import { CSVReaderSchema, JSONReaderSchema } from './readers/schema';
 import { MemoryWriterSchema, FileWriterSchema, ConsoleWriterSchema, APIWriterSchema, MongoWriterSchema } from './writers/schema';
-import { MapTransformerSchema, FilterTransformerSchema, EnrichTransformerSchema } from './transformers/schema';
+import { MapTransformerSchema, FilterTransformerSchema, EnrichTransformerSchema } from './transformers/schemas';
 
 // Generic data type - can be anything
 export type Data = any;

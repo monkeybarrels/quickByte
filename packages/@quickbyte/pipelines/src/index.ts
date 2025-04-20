@@ -2,7 +2,7 @@ import { ReaderFactory, TransformerFactory, WriterFactory } from './types';
 import { defaultRegistry } from './registry';
 import { ReaderSchemas } from './readers/schema';
 import { WriterSchemas } from './writers/schema';
-import { TransformerSchemas } from './transformers/schema';
+import { TransformerSchemas } from './transformers/schemas';
 
 // Export pipeline
 export * from './pipeline';

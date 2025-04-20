@@ -4,9 +4,11 @@
   "private": true,
   "scripts": {
     "build": "pnpm -r build",
+    "build:all": "pnpm --filter @quickbyte/pipelines build && pnpm --filter @quickbyte/cli build",
     "test": "pnpm -r test",
     "lint": "pnpm -r lint",
     "clean": "pnpm -r clean",
+    "qb": "node packages/@quickbyte/cli/dist/index.js",
     "publish:pipelines": "pnpm --filter @quickbyte/pipelines publish",
     "version:pipelines:patch": "pnpm --filter @quickbyte/pipelines version:patch",
     "version:pipelines:minor": "pnpm --filter @quickbyte/pipelines version:minor",

@@ -3,7 +3,7 @@ import { FilterTransformer } from './FilterTransformer';
 import { MapTransformer } from './MapTransformer';
 import { AddFieldTransformer } from './AddFieldTransformer';
 import { EnrichTransformer } from './EnrichTransformer';
-import { MapTransformerSchema, FilterTransformerSchema, EnrichTransformerSchema } from './schema';
+import { MapTransformerSchema, FilterTransformerSchema, EnrichTransformerSchema } from './schemas';
 
 export {
   EnrichTransformer,
