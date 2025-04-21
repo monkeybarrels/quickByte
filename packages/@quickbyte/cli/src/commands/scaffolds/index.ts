@@ -22,6 +22,6 @@ export function scaffold(type: string, name: string, outDir: string): void {
             scaffoldTransformer(scaffoldType, name, outDir);
             break;
         default:
-            throw new Error(`Unknown component type: ${type}`);
+            throw new Error(`Unsupported type: ${type}`);
     }
 }

@@ -1,10 +1,10 @@
-const path = require('path');
+import { defaults } from 'jest-config';
 
-/** @type {import('ts-jest').JestConfigWithTsJest} */
-module.exports = {
-  preset: '../../../jest-preset.js',
-  testEnvironment: 'node',
-  testMatch: ['<rootDir>/src/**/__tests__/**/*.test.ts'],
-  testPathIgnorePatterns: ['/node_modules/', '/dist/'],
-  moduleFileExtensions: ['ts', 'js']
+export default {
+    ...defaults,
+    preset: '../../../jest-preset.js',
+    testEnvironment: 'node',
+    testMatch: ['<rootDir>/src/**/__tests__/**/*.test.ts'],
+    testPathIgnorePatterns: ['/node_modules/', '/dist/'],
+    moduleFileExtensions: ['ts', 'js']
 };
