@@ -1,11 +1,11 @@
 {
   "name": "@quickbyte/cli",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "CLI tool for QuickByte",
   "main": "dist/index.js",
   "type": "module",
   "bin": {
-    "qb": "dist/index.js"
+    "qb": "./dist/index.js"
   },
   "publishConfig": {
     "access": "public"
