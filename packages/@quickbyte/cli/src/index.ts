@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { Command } from 'commander';
 import {
   addDefineCommand,
@@ -7,7 +9,7 @@ import {
   addListCommand,
   addScaffoldCommand,
   addScaffoldComponentCommand
-} from './commands';
+} from './commands/index.js';
 
 const program = new Command();
 

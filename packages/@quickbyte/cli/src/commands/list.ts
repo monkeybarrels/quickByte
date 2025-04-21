@@ -1,16 +1,20 @@
-import { defaultRegistry } from "@quickbyte/pipelines";
-import { logger } from "../logger";
-import { addCommandType } from "./types";
-import { Command } from "commander";
-import { Logger } from "winston";
+import { Command } from 'commander';
+import { Logger } from 'winston';
+import { logger } from '../logger.js';
+import { addCommandType } from './types.js';
+import { defaultRegistry } from '@quickbyte/pipelines';
 
 export const addListCommand: addCommandType = (program: Command, log: Logger = logger) => {
-    program
+  program
     .command('list')
     .description('List all registered component types')
     .action(() => {
-      console.log('📥 Readers:', Object.keys(defaultRegistry.readers));
-      console.log('🔄 Transformers:', Object.keys(defaultRegistry.transformers));
-      console.log('📤 Writers:', Object.keys(defaultRegistry.writers));
+      log.info('Available component types:');
+      log.info('\nReaders:');
+      Object.keys(defaultRegistry.readers).forEach((type: string) => log.info(`  - ${type}`));
+      log.info('\nTransformers:');
+      Object.keys(defaultRegistry.transformers).forEach((type: string) => log.info(`  - ${type}`));
+      log.info('\nWriters:');
+      Object.keys(defaultRegistry.writers).forEach((type: string) => log.info(`  - ${type}`));
     });
-}
+};

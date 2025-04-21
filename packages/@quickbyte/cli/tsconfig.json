@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
       "target": "ES2020",
-      "module": "CommonJS",
+      "module": "ES2020",
       "moduleResolution": "node",
       "lib": ["ES2020"],
       "declaration": true,
@@ -15,7 +15,7 @@
       "composite": true,
       "baseUrl": ".",
       "paths": {
-        "@quickbyte/pipelines": ["../pipelines/src"]
+        "@quickbyte/pipelines": ["../pipelines/dist"]
       },
       "types": ["node", "jest"]
     },

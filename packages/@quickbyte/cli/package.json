@@ -3,6 +3,7 @@
   "version": "0.1.1",
   "description": "CLI tool for QuickByte",
   "main": "dist/index.js",
+  "type": "module",
   "bin": {
     "qb": "dist/index.js"
   },
@@ -16,7 +17,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@quickbyte/pipelines": "workspace:*",
+    "@quickbyte/pipelines": "^0.2.19",
     "commander": "^11.1.0",
     "winston": "^3.11.0",
     "zod": "^3.22.4"

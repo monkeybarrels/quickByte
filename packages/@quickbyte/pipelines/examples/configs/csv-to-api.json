@@ -1,5 +1,5 @@
 {
-  "source": {
+  "reader": {
     "type": "CSV",
     "location": "data/users.csv",
     "options": {

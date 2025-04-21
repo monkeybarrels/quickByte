@@ -1,10 +1,10 @@
-import path from "path";
-import fs from "fs";
-import { validatePipelineConfig } from "../validation/validate-pipeline";
-import { addCommandType } from "./types";
-import { Command } from "commander";
-import { Logger } from "winston";
-import { logger } from "../logger";
+import path from 'path';
+import fs from 'fs';
+import { validatePipelineConfig } from '../validation/validate-pipeline.js';
+import { addCommandType } from './types.js';
+import { Command } from 'commander';
+import { Logger } from 'winston';
+import { logger } from '../logger.js';
 
 export const addValidateCommand: addCommandType = (program: Command, log: Logger = logger) => {
     program
