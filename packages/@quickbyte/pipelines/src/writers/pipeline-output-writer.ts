@@ -1,7 +1,5 @@
 import { Writer, WriterConfig, CsvWriterConfig } from '../types';
 import { PipelineOutputWriterSchema } from './schema';
-import { z } from 'zod';
-import { defaultRegistry } from '../registry';
 import { MongoWriter } from './mongo-writer';
 import { ApiWriter } from './api-writer';
 import { CsvWriter } from './csv-writer';

@@ -1,6 +1,6 @@
 {
   "name": "@quickbyte/cli",
-  "version": "0.1.13",
+  "version": "0.1.12",
   "private": false,
   "description": "CLI tool for QuickByte",
   "main": "dist/index.js",
@@ -12,6 +12,7 @@
     "access": "public"
   },
   "scripts": {
+    "tsc": "tsc",
     "dev": "ts-node src/index.ts",
     "build": "tsc --build",
     "clean": "rm -rf dist",

@@ -1,7 +1,5 @@
 import { Reader } from '../types';
 import { PipelineOutputReaderSchema } from './schema';
-import { z } from 'zod';
-import { defaultRegistry } from '../registry';
 import { FileReader } from './file-reader';
 import { MongoReader } from './MongoReader';
 import { MemoryReader } from './MemoryReader';

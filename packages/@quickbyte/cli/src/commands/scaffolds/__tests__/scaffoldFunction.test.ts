@@ -1,6 +1,6 @@
 import '@jest/globals';
-import fs from 'fs';
-import path from 'path';
+import * as fs from 'fs';
+import * as path from 'path';
 import { scaffold } from '../index';
 import { ScaffoldType } from '../types';
 
