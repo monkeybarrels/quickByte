@@ -1,12 +1,17 @@
 {
   "name": "quickbyte",
-  "version": "1.0.2",
+  "version": "1.0.9",
+  "bin": "packages/@quickbyte/cli/dist/index.js",
+  "pkg": {
+    "scripts": "packages/@quickbyte/cli/dist/**/*.js"
+  },
   "private": true,
   "workspaces": [
     "packages/@quickbyte/*"
   ],
+  "packageManager": "yarn@1.22.21",
   "scripts": {
-    "build": "yarn workspaces run build",
+    "build": "tsc -b packages/@quickbyte/pipelines packages/@quickbyte/cli",
     "test": "yarn workspaces run test",
     "lint": "yarn workspaces run lint",
     "clean": "yarn workspaces run clean",
