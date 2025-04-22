@@ -1,6 +1,7 @@
 {
   "name": "@quickbyte/cli",
-  "version": "0.1.10",
+  "version": "0.1.12",
+  "private": false,
   "description": "CLI tool for QuickByte",
   "main": "dist/index.js",
   "type": "module",
@@ -12,12 +13,12 @@
   },
   "scripts": {
     "dev": "ts-node src/index.ts",
-    "build": "tsc --build",
+    "build": "tsc --build && chmod +x dist/index.js",
     "clean": "rm -rf dist",
     "test": "jest"
   },
   "dependencies": {
-   "@quickbyte/pipelines": "workspace:*",
+    "@quickbyte/pipelines": "workspace:*",
     "commander": "^11.1.0",
     "winston": "^3.11.0",
     "zod": "^3.22.4"
